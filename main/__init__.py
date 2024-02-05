@@ -17,8 +17,9 @@ def create_app():
 
     PATH = os.getenv("DATABASE_PATH")
     DB_NAME = os.getenv("DATABASE_NAME")
-    if not os.path.exists(f'{PATH}{DB_NAME}'):
-        os.mknod(f'{PATH}{DB_NAME}')
+    if not os.path.exists(f'{PATH }{DB_NAME}'):
+       with open(f'{PATH }{DB_NAME}', 'w'):
+           pass
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:////{PATH}{DB_NAME}'
