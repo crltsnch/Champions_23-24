@@ -2409,4 +2409,13 @@ Transclusion expansion time report (%,ms,calls,template)
 soup = BeautifulSoup(html, 'html.parser')
 
 #Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-table = soup.find('table', {'class': 'wikitable', 'style': 'text-align:center'})
+tabla = soup.find('table', {'class': 'wikitable', 'style': 'text-align:center'})
+
+#Verificamos si esta
+if tabla:
+    #Obtener todas las filas y celdas de la tabla
+    filas = tabla.find_all('tr')
+
+    #Crear una lista para almacenas las filas de datos
+    tabla_datos = []
+    
