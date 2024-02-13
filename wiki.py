@@ -2425,7 +2425,12 @@ if tabla:
 		row_data = [cell.get_text(strip=True) for cell in cells]
 		tabla_data.append(row_data)
 
-	print(tabulate(tabla_data, headers="firstrow", tablefmt="pretty"))
+	#Especicificar nombre del csv donde guardar la tabla
+	file_name = 'octavos.csv'
+	with open(file_name, 'w', newline='', encoding='utf-8') as f:
+		writer = csv.writer(f)
+		writer.writerows(tabla_data)
+	print(f'Se guardó la tabla en {file_name}')
 
 else:
 	print('No se encontró la tabla')
