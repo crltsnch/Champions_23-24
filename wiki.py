@@ -2414,8 +2414,14 @@ tabla = soup.find('table', {'class': 'wikitable', 'style': 'text-align:center'})
 #Verificamos si esta
 if tabla:
     #Obtener todas las filas y celdas de la tabla
-    filas = tabla.find_all('tr')
+    rows = tabla.find_all('tr')
 
     #Crear una lista para almacenas las filas de datos
-    tabla_datos = []
-    
+    tabla_data = []
+
+    #Recorrer cada fila y extraer el texto de las celdas
+    for row in rows:
+        celdas = fila.find_all(['td', 'th'])
+        row_data = [celda.get_text(strip=True) for cell in cells]
+        tabla_data.append(row_data)
+        
