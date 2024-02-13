@@ -2448,20 +2448,18 @@ if tabla:
 
 	#Recorrer cada fila y extraer el texto de las celdas
 	for i, row in enumerate(rows):
+		# Omitir la primera iteración (i == 0) para evitar la primera fila de nombres de columnas
+		if i == 0:
+			continue
 		cells = row.find_all(['td', 'th'])
 		row_data = [cell.get_text(strip=True) for cell in cells]
-        
-        # En la primera fila, modificar el valor de la columna "temporada" a 'temporada'
-		if i == 0:
-			row_data.append('Temporada')
-		else:
-			row_data.append('21/22')
+		row_data.append('21/22')
 			
 		tabla_data.append(row_data)
 
 	#Especicificar nombre del csv donde guardar la tabla
 	file_name = 'octavos.csv'
-	with open(file_name, 'w', newline='', encoding='utf-8') as f:
+	with open(file_name, 'a', newline='', encoding='utf-8') as f:
 		writer = csv.writer(f)
 		writer.writerows(tabla_data)
 	print(f'Se guardó la tabla en {file_name}')
