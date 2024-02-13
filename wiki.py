@@ -2405,3 +2405,8 @@ Transclusion expansion time report (%,ms,calls,template)
 </body>
 </html>"""
 
+#Crear un objeto BeautifulSoup
+soup = BeautifulSoup(html, 'html.parser')
+
+#Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
+table = soup.find('table', {'class': 'wikitable', 'style': 'text-align:center'})
