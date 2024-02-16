@@ -1,6 +1,7 @@
 import csv
 import requests
 from bs4 import BeautifulSoup
+from tabulate import tabulate
 
 #Tabla de datos de los jugadores de cada equipo de octavos de la UEFA
 
@@ -28,3 +29,11 @@ for fila in filas:
     if datos_fila:
         datos.append(datos_fila)
 
+tabla = tabulate(datos, headers=datos[0], tablefmt='fancy_grid')
+print(tabla)
+
+# Guardamos los datos en un archivo CSV
+ruta_csv = 'jugadores.csv'
+with open(ruta_csv, 'a', newline='', encoding='utf-8') as archivo_csv:
+    escritor_csv = csv.writer(archivo_csv)
+    escritor_csv.writerows(datos)
