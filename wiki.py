@@ -2457,6 +2457,7 @@ if tabla:
 		row_data.append('18/19')
 			
 		tabla_data.append(row_data)
+		print(tabla_data)
 
 	#Especicificar nombre del csv donde guardar la tabla
 	file_name = 'octavos.csv'
