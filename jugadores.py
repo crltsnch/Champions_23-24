@@ -5,7 +5,7 @@ from tabulate import tabulate
 from urllib.parse import urlparse, unquote
 
 # Lista de URLs de equipos
-url = 'https://fbref.com/es/equipos/acbb6a5b/Estadisticas-de-RB-Leipzig'
+url = 'https://fbref.com/es/equipos/e2d8892c/Estadisticas-de-Paris-Saint-Germain'
 
 ''' [
     'https://fbref.com/es/equipos/054efa67/Estadisticas-de-Bayern-Munich',
@@ -54,7 +54,7 @@ print(f"\nProcesando datos para: {nombre_equipo}")
 soup = BeautifulSoup(html, 'html.parser')
 
 # Buscar en el HTML el elemento que se quiere
-jugadores_data = soup.find('table', {'class': 'stats_table', 'id': 'stats_standard_20'})
+jugadores_data = soup.find('table', {'class': 'stats_table', 'id': 'stats_standard_13'})
 
 # Verificar si se encontró la tabla
 if jugadores_data:
