@@ -1,6 +1,7 @@
 # Champions_23-24
 
 El link a mi repositorio es: [GitHub](https://github.com/crltsnch/Champions_23-24)
+
 La idea de este trabajo es hacer unas predicciones sobre la UEFA Champions League 2023/2024
 
 ## getdatos
@@ -8,6 +9,7 @@ En esta carpeta están los ficheros que he usado para conseguir los datos de los
 
 ## data
 En esta carpeta está toda la información que he conseguido hasta el momento. 
+
   - jugadores : En este tabla están los jugadores que están actualmente en la fase de octavos de la champions con sus estadísticas.
   - octavos_df : Este es el DataFrame que he sacado con la exploración y limpieza de datos en el archivo exploracion.py.
   - octavos_id : Es el mismo data que octavos_df, pero para hacer regresión he pasado los nombres a un id.
@@ -23,7 +25,9 @@ En este fichero he hecho una exploración de los datos, limpieza y organización
 
 ## visualizacion.ipynb
 El siguiente paso ha sido la visualización de datos, representar información de manera gráfica y comprensible, facilitando así la interpretación de conjuntos. Esto permite una comprensión rápida y la identificación de tendencias y patrones. Las visualizaciones también ayudan a detectar anomalías y ofrecen exploración interactiva. Facilita la toma de decisiones al proporcionar contexto visual.
+
 En mi caso he realizado 4 gráficas:
+
   - Los goles totales por cada equipo en los últimos 11 años.
   - Los goles totale de los últimos 11 años en la ida y en la vuelta de cada equipo.
   - Los goles de los tres equipos con más champions en las últimas 11 temporadas.
@@ -31,25 +35,30 @@ En mi caso he realizado 4 gráficas:
 
 ## analisis.ipynb
 Mi objetivo era predecir los goles totales que va a meter los equipos de la columna 'equipo1' en la ida y en la vuelta.
+
 En el análisis hemos realizado una regresión lineal donde nuestra evaluación ha sido:
-  Mean Squared Error (MSE): 0.5647731274271107
-  R-squared (R²): 0.8529047481620708
-  Root Mean Squared Error (RMSE): 0.7515138903753614
-  Mean Absolute Error (MAE): 0.5374315500330797
+
+  + Mean Squared Error (MSE): 0.5647731274271107
+  + R-squared (R²): 0.8529047481620708
+  + Root Mean Squared Error (RMSE): 0.7515138903753614
+  + Mean Absolute Error (MAE): 0.5374315500330797
+    
 Para visualizar mejor los resultados perdichos respuesto los reales. He creado un grafico de dispersión y un histograma de los residuos.
   
 También he realizado un árbol de decisión para ver si las predicciones mejoraban:
-  Mean Squared Error (MSE) for Decision Tree: 1.2777777777777777
-  R-squared (R²) for Decision Tree: 0.6672025723472668
-  Mean Absolute Error (MAE) for Decision Tree: 0.7222222222222222
+
+  + Mean Squared Error (MSE) for Decision Tree: 1.2777777777777777
+  + R-squared (R²) for Decision Tree: 0.6672025723472668
+  + Mean Absolute Error (MAE) for Decision Tree: 0.7222222222222222
 
 La regresión lineal tiene un rendimiento superior en este conjunto de datos específico, según las métricas evaluadas. La regresión lineal explica una mayor proporción de la variabilidad en la variable objetivo (según R^2) y tiene un MSE más bajo en comparación con el árbol de decisión. Si bien el árbol de decisión puede ser útil, especialmente si hay relaciones no lineales en los datos, en este caso, la regresión lineal parece ser una opción más efectiva.
 
 Después he probado con random forest:
-  Mean Squared Error (MSE) for Random Forest: 1.1426277777777778
-  R-squared (R²) for Random Forest: 0.7024024115755627
-  Mean Absolute Error (MAE) for Random Forest: 0.8061111111111111
-  {'Equipo 1': 0.037121375123763865,
+
+  + Mean Squared Error (MSE) for Random Forest: 1.1426277777777778
+  + R-squared (R²) for Random Forest: 0.7024024115755627
+  + Mean Absolute Error (MAE) for Random Forest: 0.8061111111111111
+  + {'Equipo 1': 0.037121375123763865,
  'Equipo 2': 0.038921409305569823,
  'Temporada': 0.04377090014279057,
  'goles_2': 0.03273337216358079,
@@ -62,4 +71,4 @@ El modelo de Random Forest parece estar haciendo predicciones significativamente
 
 Eligiendo regresión lienal como nuestro mejor modelo, observando los valores predichos para nuestros valores de x_test (tener en cuenta que el array que devuelve la predicción esta escalada) podríamos decir que en esta fase de octavos, que actualmente se está jugando, pasaría a cuartos de final el Arsenal, el PSG meterá 4 goles (actualmente lleva 2, queda la vuelta),  el Atlético de Madrid anotará 3 goles. 
 
-En futuras entregas podremos hacer análisis detallados en relación con los datos de jugadores y otros archivos CSV que tenemos disponibles.
+En futuras entregas podremos hacer análisis detallados en relación con otros datos como los de jugadores.
