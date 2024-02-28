@@ -5,25 +5,7 @@ from tabulate import tabulate
 from urllib.parse import urlparse, unquote
 
 # Lista de URLs de equipos
-url = 'https://fbref.com/es/equipos/e2d8892c/Estadisticas-de-Paris-Saint-Germain'
-
-''' [
-    'https://fbref.com/es/equipos/054efa67/Estadisticas-de-Bayern-Munich',
-    'https://fbref.com/es/equipos/18050b20/Estadisticas-de-FC-Copenhagen',
-    'https://fbref.com/es/equipos/7213da33/Estadisticas-de-Lazio',
-    'https://fbref.com/es/equipos/b8fd03ef/Estadisticas-de-Manchester-City',
-    'https://fbref.com/es/equipos/18bb7c10/Estadisticas-de-Arsenal',
-    'https://fbref.com/es/equipos/5e876ee6/Estadisticas-de-Porto',
-    'https://fbref.com/es/equipos/206d90db/Estadisticas-de-Barcelona',
-    'https://fbref.com/es/equipos/d48ad4ff/Estadisticas-de-Napoli',
-    'https://fbref.com/es/equipos/53a2f082/Estadisticas-de-Real-Madrid',
-    'https://fbref.com/es/equipos/acbb6a5b/Estadisticas-de-RB-Leipzig',
-    'https://fbref.com/es/equipos/add600ae/Estadisticas-de-Dortmund',
-    'https://fbref.com/es/equipos/e334d850/Estadisticas-de-PSV-Eindhoven',
-    'https://fbref.com/es/equipos/d609edc0/Estadisticas-de-Internazionale',
-    'https://fbref.com/es/equipos/db3b9613/Estadisticas-de-Atletico-Madrid',
-    'https://fbref.com/es/equipos/1e1c0fbb/Estadisticas-de-Paris-Saint-Germain',
-]'''
+url = '''https://www.bdfutbol.com/es/t/trcompCHA.html?p=coaches&t=T'''
 
   # Realizamos la petición a la web
 req = requests.get(url)
