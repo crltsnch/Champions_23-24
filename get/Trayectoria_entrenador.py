@@ -259,6 +259,15 @@ url = ['https://www.bdfutbol.com/es/l/l93816.html',
 
 print(len(url))
 
+# Carga el archivo CSV en un DataFrame
+df_entrenador = pd.read_csv('entrenador.csv')
+
+# Extrae los IDs de la columna idEntrenador
+lista_ids_entrenador = df_entrenador['idEntrenador'].tolist()
+
+# Imprime o utiliza la lista según tus necesidades
+print(lista_ids_entrenador)
+
 # Realizar la solicitud GET y crear el objeto BeautifulSoup
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
