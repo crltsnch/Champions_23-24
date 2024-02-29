@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from tabulate import tabulate
 from urllib.parse import urlparse, unquote
+import pandas as pd
 
 # Lista de URLs de equipos
 url = ['https://www.bdfutbol.com/es/l/l93816.html',
@@ -254,13 +255,15 @@ url = ['https://www.bdfutbol.com/es/l/l93816.html',
     'https://www.bdfutbol.com/es/l/l95008.html',
     'https://www.bdfutbol.com/es/l/l82969.html',
     'https://www.bdfutbol.com/es/l/l50794.html',
-    'https://www.bdfutbol.com/es/l/l7419.html'
+    'https://www.bdfutbol.com/es/l/l7419.html',
+    'https://www.bdfutbol.com/es/l/l2026.html',
+    'https://www.bdfutbol.com/es/l/l1098.html'
           ]
 
 print(len(url))
 
 # Carga el archivo CSV en un DataFrame
-df_entrenador = pd.read_csv('entrenador.csv')
+df_entrenador = pd.read_csv('./data/entrenador.csv')
 
 # Extrae los IDs de la columna idEntrenador
 lista_ids_entrenador = df_entrenador['idEntrenador'].tolist()
