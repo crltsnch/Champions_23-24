@@ -6,7 +6,7 @@ from urllib.parse import urlparse, unquote
 import pandas as pd
 
 # Lista de URLs de equipos
-url = ['https://www.bdfutbol.com/es/l/l93816.html',
+urls = ['https://www.bdfutbol.com/es/l/l93816.html',
     'https://www.bdfutbol.com/es/l/l93761.html',
     'https://www.bdfutbol.com/es/l/l95279.html',
     'https://www.bdfutbol.com/es/l/l1566.html',
@@ -260,7 +260,7 @@ url = ['https://www.bdfutbol.com/es/l/l93816.html',
     'https://www.bdfutbol.com/es/l/l1098.html'
           ]
 
-print(len(url))
+print(len(urls))
 
 # Carga el archivo CSV en un DataFrame
 df_entrenador = pd.read_csv('./data/entrenador.csv')
@@ -271,34 +271,40 @@ lista_ids_entrenador = df_entrenador['idEntrenador'].tolist()
 # Imprime o utiliza la lista según tus necesidades
 print(lista_ids_entrenador)
 
-# Realizar la solicitud GET y crear el objeto BeautifulSoup
-response = requests.get(url)
-soup = BeautifulSoup(response.text, 'html.parser')
+resultados = []
 
-# Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-tabla = soup.find('table', {'class': 'taula_estil traject'})
+for url in urls:
+    # Realizar la solicitud GET y crear el objeto BeautifulSoup
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-# Verificar si se encontró la tabla
-if tabla:
-    # Obtener todas las filas y celdas de la tabla
-    rows = tabla.find_all('tr')
+    # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
+    tabla = soup.find('div', {'id': 'traj', 'class': 'scrtraj mt-2'})
 
-    # Crear una lista para almacenar las filas de datos
-    tabla_data = []
+    # Verificar si se encontró la tabla
+    if tabla:
+        # Obtener todas las filas y celdas de la tabla
+        rows = tabla.find_all('tr')
 
-    # Recorrer cada fila y extraer el texto de las celdas
-    for i, row in enumerate(rows):
-        if i == 0:
-            continue
-        cells = row.find_all(['td', 'th'])
-        row_data = [cell.get_text(strip=True) for cell in cells]
-        tabla_data.append(row_data)
+        # Crear una lista para almacenar las filas de datos
+        tabla_data = []
 
-    # Encabezados de las columnas
-    column_headers = ['idEntrenador', 'Pais', 'Apodo', 'Nombre', 'T', 'PJ', 'PG', 'PE', 'PP', '%']
+        # Recorrer cada fila y extraer el texto de las celdas
+        for i, row in enumerate(rows):
+            if i == 0:
+                continue
+            cells = row.find_all(['td', 'th'])
+            row_data = [cell.get_text(strip=True) for cell in cells]
+            tabla_data.append(row_data)
 
-    # Añadir encabezados a la tabla de datos solo si hay datos en la tabla
+        # Agregar los resultados a la lista general
+        resultados.append(tabla_data)
+
+        # Encabezados de las columnas
+        #column_headers = ['idEntrenador', 'Pais', 'Apodo', 'Nombre', 'T', 'PJ', 'PG', 'PE', 'PP', '%']
+
+        # Añadir encabezados a la tabla de datos solo si hay datos en la tabla
 
 
-else:
-    print('No se encontró la tabla')
+    else:
+        print('No se encontró la tabla')
