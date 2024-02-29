@@ -267,13 +267,15 @@ df_entrenador = pd.read_csv('./data/entrenador.csv')
 
 # Extrae los IDs de la columna idEntrenador
 lista_ids_entrenador = df_entrenador['idEntrenador'].tolist()
+lista_ids_entrenador.append('251')
+lista_ids_entrenador.append('252') 
 
 # Imprime o utiliza la lista según tus necesidades
 print(lista_ids_entrenador)
 
 resultados = []
 
-for url in urls:
+for idx, url in enumerate(urls):
     # Realizar la solicitud GET y crear el objeto BeautifulSoup
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -290,18 +292,20 @@ for url in urls:
         tabla_data = []
 
         # Recorrer cada fila y extraer el texto de las celdas
-        for i, row in enumerate(rows):
+        for i, row in enumerate(rows[:-1]):
             if i == 0:
                 continue
             cells = row.find_all(['td', 'th'])
-            row_data = [cell.get_text(strip=True) for cell in cells]
+            row_data = [lista_ids_entrenador[idx]] + [cell.get_text(strip=True).replace('⬤', '') for cell in cells]
             tabla_data.append(row_data)
 
         # Agregar los resultados a la lista general
         resultados.append(tabla_data)
-
-        # Encabezados de las columnas
+        print(tabulate(tabla_data,  tablefmt='grid'))
         #column_headers = ['idEntrenador', 'Pais', 'Apodo', 'Nombre', 'T', 'PJ', 'PG', 'PE', 'PP', '%']
+        #print(tabulate(resultados,  tablefmt='grid'))
+        # Encabezados de las columnas
+        
 
         # Añadir encabezados a la tabla de datos solo si hay datos en la tabla
 
