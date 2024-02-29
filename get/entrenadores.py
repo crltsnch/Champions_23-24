@@ -24,6 +24,8 @@ if tabla:
 
     # Recorrer cada fila y extraer el texto de las celdas
     for i, row in enumerate(rows):
+        if i == 0:
+            continue
         cells = row.find_all(['td', 'th'])
         row_data = [cell.get_text(strip=True) for cell in cells]
         tabla_data.append(row_data)
@@ -36,11 +38,11 @@ if tabla:
         tabla_data.insert(0, column_headers)
         print(tabulate(tabla_data, headers='firstrow', tablefmt='grid'))
         # Especificar el nombre del archivo CSV donde guardar la tabla
-        '''file_name = 'data/octavos.csv'
+        file_name = './data/entrenador.csv'
         with open(file_name, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerows(tabla_data)
-        print(f'Se guardó la tabla en {file_name}')'''
+        print(f'Se guardó la tabla en {file_name}')
     else:
         print('La tabla no contiene datos.')
 
