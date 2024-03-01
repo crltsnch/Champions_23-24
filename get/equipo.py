@@ -31,7 +31,7 @@ if tabla:
         tabla_data.append(row_data)
 
     # Encabezados de las columnas
-    column_headers = ['idEquipo', 'Nombre', 'Pais', 'T', 'PJ', 'PG', 'PE', 'PP', '%', 'Títulos', 'F', '1/2', '1/4', '1/8', '1/16', 'GF', 'GC', 'TA', 'TR']
+    column_headers = ['idEquipo', 'Escudo', 'Nombre', 'Pais', 'T', 'PJ', 'PG', 'PE', 'PP', '%', 'Títulos', 'F', '1/2', '1/4', '1/8', '1/16', 'GF', 'GC', 'TA', 'TR']
 
     # Añadir encabezados a la tabla de datos solo si hay datos en la tabla
     if len(tabla_data) > 0:
