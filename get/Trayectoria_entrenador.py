@@ -274,6 +274,7 @@ lista_ids_entrenador.append('252')
 print(lista_ids_entrenador)
 
 resultados = []
+headers = ['ID Entrenador', 'Temporada', 'Equipo', 'Nun', 'Non', 'División', 'Edad', 'PJ', 'PG', 'PE', 'PP', 'Non']
 
 for idx, url in enumerate(urls):
     # Realizar la solicitud GET y crear el objeto BeautifulSoup
@@ -300,15 +301,22 @@ for idx, url in enumerate(urls):
             tabla_data.append(row_data)
 
         # Agregar los resultados a la lista general
-        resultados.append(tabla_data)
-        print(tabulate(tabla_data,  tablefmt='grid'))
-        #column_headers = ['idEntrenador', 'Pais', 'Apodo', 'Nombre', 'T', 'PJ', 'PG', 'PE', 'PP', '%']
-        #print(tabulate(resultados,  tablefmt='grid'))
-        # Encabezados de las columnas
-        
-
-        # Añadir encabezados a la tabla de datos solo si hay datos en la tabla
-
+        resultados.extend(tabla_data)
+        #print(tabulate(tabla_data,  tablefmt='grid'))
 
     else:
         print('No se encontró la tabla')
+        
+if len(resultados) > 0:
+    resultados.insert(0, headers)
+    # Especificar el nombre del archivo CSV donde guardar la tabla
+    file_name = './data/Trayectoria_entrenador.csv'
+    with open(file_name, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerows(resultados)
+    print(f'Se guardó la tabla en {file_name}')
+else:
+    print('La tabla no contiene datos.')
+
+
+    
