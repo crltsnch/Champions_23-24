@@ -274,7 +274,7 @@ lista_ids_entrenador.append('252')
 print(lista_ids_entrenador)
 
 resultados = []
-headers = ['ID Entrenador', 'Temporada', 'Equipo', 'Nun', 'Non', 'División', 'Edad', 'PJ', 'PG', 'PE', 'PP', 'Non']
+headers = ['idEntrenador', 'Temporada', 'Equipo', 'Nun', 'Non', 'División', 'Edad', 'PJ', 'PG', 'PE', 'PP', 'Non']
 
 for idx, url in enumerate(urls):
     # Realizar la solicitud GET y crear el objeto BeautifulSoup
