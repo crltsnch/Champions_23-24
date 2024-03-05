@@ -34,7 +34,7 @@ for temporada in temporadas:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-        tabla = soup.find('table', {'class': 'min_width sortable stats_table shade_zero now_sortable sticky_table eq2 re2 le2'})
+        tabla = soup.find('table', {'id': 'stats_standard'})
 
         # Verificar si se encontró la tabla
         if tabla:
