@@ -27,6 +27,9 @@ url = 'https://fbref.com/es/equipos/e2d8892c/Estadisticas-de-Paris-Saint-Germain
 
   # Realizamos la petición a la web
 req = requests.get(url)
+
+if req == 200:
+    print("OK")
 # Extraemos el HTML
 html = req.text
 
@@ -76,11 +79,11 @@ if jugadores_data:
     tabla = tabulate(datos[1:], headers=datos[0], tablefmt='fancy_grid')
     print(tabla)
 
-    # Guardar los datos en un archivo CSV
+    '''# Guardar los datos en un archivo CSV
     ruta_csv = 'data/jugadores.csv'
     with open(ruta_csv, 'a', newline='', encoding='utf-8') as archivo_csv:
         escritor_csv = csv.writer(archivo_csv)
-        escritor_csv.writerows(datos)
+        escritor_csv.writerows(datos)'''
 
 else:
     print("No se encontró la tabla con las clases e ID especificados.")

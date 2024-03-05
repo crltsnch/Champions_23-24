@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from tabulate import tabulate
 from urllib.parse import urlparse, unquote
-import pandas as pd
+import time
 
 #Lista de temporadas
 temporadas = [
@@ -22,40 +22,44 @@ temporadas = [
 
 
 resultados = []
-headers = ['Temporada', 'Jugador', 'Nacionalidad', 'Equipo', 'Edad', 'Posicion', 'PJ', 'Min', 'Goles', 'Asistencias', 'Tarjetas Amarillas', 'Tarjetas Rojas', 'Goles por 90 minutos', 'Asistencias por 90 minutos', 'Goles + Asistencias por 90 minutos', 'Participación en goles']
+headers = ['#', 'Jugador', 'País', 'Posc', 'Equipo', 'Edad', 'Nacimiento', 'PJ', 'Titular', 'Mín', '90 s', 'Gls.', 'Ass', 'G+A', 'G-TP', 'TP', 'TPint', 'TA', 'TR', 'Gls.90', 'Ast90', 'G+A90', 'G-TP90', 'G+A-TP90', 'Partidos']
 
-for idx,temporada in enumerate(temporadas):
+
+for temporada in temporadas:
     url = f'https://fbref.com/es/comps/8/{temporada}/stats/Estadisticas-{temporada}-Champions-League'
     # Realizar la solicitud GET y crear el objeto BeautifulSoup
+    
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-    tabla = soup.find('table', {'class': 'min_width'})
+        # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
+        tabla = soup.find('table', {'class': 'min_width', 'id': 'stats_standard'})
 
-    # Verificar si se encontró la tabla
-    if tabla:
-        # Obtener todas las filas y celdas de la tabla
-        rows = tabla.find_all('tr')
+        # Verificar si se encontró la tabla
+        if tabla:
+            # Obtener todas las filas y celdas de la tabla
+            rows = tabla.find_all('tr')
 
-        # Crear una lista para almacenar las filas de datos
-        tabla_data = []
+            # Crear una lista para almacenar las filas de datos
+            tabla_data = []
 
-        # Recorrer cada fila y extraer el texto de las celdas
-        for i, row in enumerate(rows):
-            if i == 0 or i == 1:
-                continue
-            cells = row.find_all(['td', 'th'])
-            row_data = [temporadas[idx]] + [cell.get_text(strip=True) for cell in cells]
-            tabla_data.append(row_data)
+            # Recorrer cada fila y extraer el texto de las celdas
+            for i, row in enumerate(rows):
+                if i == 0 or i == 1:
+                    continue
+                cells = row.find_all(['td', 'th'])
+                row_data = [cell.get_text(strip=True) for cell in cells]
+                tabla_data.append([temporada]+row_data)
 
-        # Agregar los resultados a la lista general
-        resultados.extend(tabla_data)
-        print(tabulate(tabla_data,  tablefmt='grid'))
+            # Agregar los resultados a la lista general
+            resultados.extend(tabla_data)
+            print(tabulate(tabla_data,  tablefmt='grid'))
 
-    else:
-        print('No se encontró la tabla')
-        
+        else:
+            print('No se encontró la tabla')
+
+
 '''if len(resultados) > 0:
     resultados.insert(0, headers)
     # Especificar el nombre del archivo CSV donde guardar la tabla
