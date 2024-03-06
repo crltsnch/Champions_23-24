@@ -30,11 +30,12 @@ for temporada in temporadas:
     # Realizar la solicitud GET y crear el objeto BeautifulSoup
     
     response = requests.get(url)
+    
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-        tabla = soup.find('table', {'id': 'stats_standard'})
+        tabla = soup.find('table', {'class':'min_width sortable stats_table min_width shade_zero'})
 
         # Verificar si se encontró la tabla
         if tabla:
