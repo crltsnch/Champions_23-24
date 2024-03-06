@@ -40,10 +40,10 @@ for url in urls:
     soup = BeautifulSoup(html, 'html.parser')
 
     # Buscamos la sección de texto que contiene la información de las fases eliminatorias
-    html = soup.find('table', {'class': 'stats_table', 'id': 'sched_all'})
+    table = soup.find('table', {'class': 'stats_table', 'id': 'sched_all'})
      
     # Obtenemos las filas de la tabla
-    filas = html.find_all('tr')
+    filas = table.find_all('tr')
 
     # Iteramos sobre las filas y obtenemos los datos de cada celda
     for fila in filas:
