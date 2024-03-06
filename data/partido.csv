@@ -1,5 +1,5 @@
 Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2022-2023,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2022-2023,Group stage,1,Tue,2022-09-06,18:45,Dinamo Zagrebhr,1–0,engChelsea,"20,607",Stadion Maksimir,István Kovács,Match Report,
 2022-2023,Group stage,1,Tue,2022-09-06,18:45,Dortmundde,3–0,dkFC Copenhagen,"70,700",Signal Iduna Park,François Letexier,Match Report,
 2022-2023,Group stage,1,Tue,2022-09-06,20:00,Celticsct,0–3,esReal Madrid,"57,057",Celtic Park,Sandro Schärer,Match Report,
@@ -132,8 +132,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2022-2023,Semi-finals,,Tue,2023-05-16,21:00,Interit,1–0,itMilan,"75,567",Stadio Giuseppe Meazza,Clément Turpin,Match Report,Leg 2 of 2; Inter won
 2022-2023,Semi-finals,,Wed,2023-05-17,20:00,Manchester Cityeng,4–0,esReal Madrid,"52,313",Etihad Stadium,Szymon Marciniak,Match Report,Leg 2 of 2; Manchester City won
 2022-2023,Final,,Sat,2023-06-10,22:00,Manchester Cityeng,1–0,itInter,"71,412",Atatürk Olimpiyat Stadı (Neutral Site),Szymon Marciniak,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2021-2022,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2021-2022,Group stage,1,Tue,2021-09-14,18:45,Sevillaes,1–1,atRB Salzburg,"18,373",Estadio Ramón Sánchez Pizjuán,Aliaksei Kulbakou,Match Report,
 2021-2022,Group stage,1,Tue,2021-09-14,18:45,Young Boysch,2–1,engManchester Utd,"31,120",Wankdorfstadion,François Letexier,Match Report,
 2021-2022,Group stage,1,Tue,2021-09-14,20:00,Chelseaeng,1–0,ruZenit,"39,252",Stamford Bridge,Bartosz Frankowski,Match Report,
@@ -266,8 +265,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2021-2022,Semi-finals,,Tue,2022-05-03,21:00,Villarreales,2–3,engLiverpool,"23,665",Estadio de la Cerámica,Danny Makkelie,Match Report,Leg 2 of 2; Liverpool won
 2021-2022,Semi-finals,,Wed,2022-05-04,21:00,Real Madrides,3–1,engManchester City,"61,416",Estadio Santiago Bernabéu,Daniele Orsato,Match Report,Leg 2 of 2; Real Madrid won; Required Extra Time
 2021-2022,Final,,Sat,2022-05-28,21:30,Liverpooleng,0–1,esReal Madrid,"75,000",Stade de France (Neutral Site),Clément Turpin,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2020-2021,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2020-2021,Group stage,1,Tue,2020-10-20,19:55,Zenitru,1–2,beClub Brugge,"16,682",Gazprom Arena,Benoît Bastien,Match Report,
 2020-2021,Group stage,1,Tue,2020-10-20,19:55,Dynamo Kyivua,0–2,itJuventus,"14,850",NSK Olimpijs'kyj,Ovidiu Hațegan,Match Report,
 2020-2021,Group stage,1,Tue,2020-10-20,20:00,Chelseaeng,0–0,esSevilla,,Stamford Bridge,Davide Massa,Match Report,
@@ -400,8 +398,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2020-2021,Semi-finals,,Tue,2021-05-04,20:00,Manchester Cityeng,2–0,frParis S-G,,Etihad Stadium,Björn Kuipers,Match Report,Leg 2 of 2; Manchester City won
 2020-2021,Semi-finals,,Wed,2021-05-05,20:00,Chelseaeng,2–0,esReal Madrid,,Stamford Bridge,Daniele Orsato,Match Report,Leg 2 of 2; Chelsea won
 2020-2021,Final,,Sat,2021-05-29,22:00,Manchester Cityeng,0–1,engChelsea,"14,110",Estádio Do Dragão (Neutral Site),Antonio Matéu Lahoz,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2019-2020,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2019-2020,Group stage,1,Tue,2019-09-17,18:55,Lyonfr,1–1,ruZenit,"47,201",Groupama Stadium,Michael Oliver,Match Report,
 2019-2020,Group stage,1,Tue,2019-09-17,18:55,Interit,1–1,czSlavia Prague,"50,128",Stadio Giuseppe Meazza,Ruddy Buquet,Match Report,
 2019-2020,Group stage,1,Tue,2019-09-17,20:00,Chelseaeng,0–1,esValencia,"39,469",Stamford Bridge,Cüneyt Çakιr,Match Report,
@@ -527,8 +524,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2019-2020,Semi-finals,,Tue,2020-08-18,20:00,RB Leipzigde,0–3,frParis S-G,,Estádio do Sport Lisboa e Benfica (Neutral Site),Björn Kuipers,Match Report,
 2019-2020,Semi-finals,,Wed,2020-08-19,20:00,Lyonfr,0–3,deBayern Munich,,Estádio José Alvalade (Neutral Site),Antonio Matéu Lahoz,Match Report,
 2019-2020,Final,,Sun,2020-08-23,20:00,Paris S-Gfr,0–1,deBayern Munich,,Estádio do Sport Lisboa e Benfica (Neutral Site),Daniele Orsato,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2018-2019,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2018-2019,Group stage,1,Tue,2018-09-18,18:55,Barcelonaes,4–0,nlPSV Eindhoven,"73,462",Camp Nou,Tasos Sidiropoulos,Match Report,
 2018-2019,Group stage,1,Tue,2018-09-18,18:55,Interit,2–1,engTottenham,"64,123",Stadio Giuseppe Meazza,Ruddy Buquet,Match Report,
 2018-2019,Group stage,1,Tue,2018-09-18,20:00,Liverpooleng,3–2,frParis S-G,"52,478",Anfield,Baris Şimşek,Match Report,
@@ -661,8 +657,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2018-2019,Semi-finals,,Tue,2019-05-07,20:00,Liverpooleng,4–0,esBarcelona,"55,212",Anfield,Cüneyt Çakιr,Match Report,Leg 2 of 2; Liverpool won
 2018-2019,Semi-finals,,Wed,2019-05-08,21:00,Ajaxnl,2–3,engTottenham,"52,641",Johan Cruyff ArenA,Felix Brych,Match Report,Leg 2 of 2; Tottenham won
 2018-2019,Final,,Sat,2019-06-01,21:00,Tottenhameng,0–2,engLiverpool,"63,272",Estadio Wanda Metropolitano (Neutral Site),Damir Skomina,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2017-2018,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2017-2018,Group stage,1,Tue,2017-09-12,19:45,Chelseaeng,6–0,azQarabağ FK,"41,150",Stamford Bridge,Tasos Sidiropoulos,Match Report,
 2017-2018,Group stage,1,Tue,2017-09-12,19:45,Celticsct,0–5,frParis S-G,"57,562",Celtic Park,Daniele Orsato,Match Report,
 2017-2018,Group stage,1,Tue,2017-09-12,19:45,Manchester Utdeng,3–0,chBasel,"73,854",Old Trafford,Ruddy Buquet,Match Report,
@@ -795,8 +790,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2017-2018,Semi-finals,,Tue,2018-05-01,20:45,Real Madrides,2–2,deBayern Munich,"77,459",Estadio Santiago Bernabéu,Cüneyt Çakιr,Match Report,Leg 2 of 2; Real Madrid won
 2017-2018,Semi-finals,,Wed,2018-05-02,20:45,Romait,4–2,engLiverpool,"61,889",Stadio Olimpico,Damir Skomina,Match Report,Leg 2 of 2; Liverpool won
 2017-2018,Final,,Sat,2018-05-26,21:45,Real Madrides,3–1,engLiverpool,"61,561",NSK Olimpijs'kyj (Neutral Site),Milorad Mažić,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2016-2017,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2016-2017,Group stage,1,Tue,2016-09-13,19:45,Benficapt,1–1,trBeşiktaş,"42,126",Estádio do Sport Lisboa e Benfica,Milorad Mažić,Match Report,
 2016-2017,Group stage,1,Tue,2016-09-13,20:45,Bayern Munichde,5–0,ruRostov,"70,000",Allianz Arena,Anthony Taylor,Match Report,
 2016-2017,Group stage,1,Tue,2016-09-13,20:45,Paris S-Gfr,1–1,engArsenal,"46,440",Parc des Princes,Viktor Kassai,Match Report,
@@ -929,8 +923,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2016-2017,Semi-finals,,Tue,2017-05-09,20:45,Juventusit,2–1,frMonaco,"40,244",Allianz Stadium,Björn Kuipers,Match Report,Leg 2 of 2; Juventus won
 2016-2017,Semi-finals,,Wed,2017-05-10,20:45,Atlético Madrides,2–1,esReal Madrid,"53,422",Estadio Vicente Calderón,Cüneyt Çakιr,Match Report,Leg 2 of 2; Real Madrid won
 2016-2017,Final,,Sat,2017-06-03,19:45,Juventusit,1–4,esReal Madrid,"65,842",National Stadium (Neutral Site),Felix Brych,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2015-2016,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2015-2016,Group stage,1,Tue,2015-09-15,19:45,Manchester Cityeng,1–2,itJuventus,"50,363",Etihad Stadium,Damir Skomina,Match Report,
 2015-2016,Group stage,1,Tue,2015-09-15,19:45,Benficapt,2–0,kzFC Astana,"32,799",Estádio do Sport Lisboa e Benfica,Tasos Sidiropoulos,Match Report,
 2015-2016,Group stage,1,Tue,2015-09-15,20:45,Sevillaes,3–0,deM'Gladbach,"36,959",Estadio Ramón Sánchez Pizjuán,Pavel Královec,Match Report,
@@ -1063,8 +1056,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2015-2016,Semi-finals,,Tue,2016-05-03,20:45,Bayern Munichde,2–1,esAtlético Madrid,"70,000",Allianz Arena,Cüneyt Çakιr,Match Report,Leg 2 of 2; Atlético Madrid won
 2015-2016,Semi-finals,,Wed,2016-05-04,20:45,Real Madrides,1–0,engManchester City,"78,300",Estadio Santiago Bernabéu,Damir Skomina,Match Report,Leg 2 of 2; Real Madrid won
 2015-2016,Final,,Sat,2016-05-28,20:45,Real Madrides,(5)1–1(3),esAtlético Madrid,"71,942",Stadio Giuseppe Meazza (Neutral Site),Mark Clattenburg,Match Report,Real Madrid won on penalty kicks following extra time
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2014-2015,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2014-2015,Group stage,1,Tue,2014-09-16,19:45,Benficapt,0–2,ruZenit,"35,294",Estádio do Sport Lisboa e Benfica,Svein Oddvar Moen,Match Report,
 2014-2015,Group stage,1,Tue,2014-09-16,19:45,Liverpooleng,2–1,bgLudogorets,"43,307",Anfield,Matej Jug,Match Report,
 2014-2015,Group stage,1,Tue,2014-09-16,20:45,Dortmundde,2–0,engArsenal,"65,851",Signal Iduna Park,Olegário Benquerença,Match Report,
@@ -1197,8 +1189,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2014-2015,Semi-finals,,Tue,2015-05-12,20:45,Bayern Munichde,3–2,esBarcelona,"70,000",Allianz Arena,Mark Clattenburg,Match Report,Leg 2 of 2; Barcelona won
 2014-2015,Semi-finals,,Wed,2015-05-13,20:45,Real Madrides,1–1,itJuventus,"78,153",Estadio Santiago Bernabéu,Jonas Eriksson,Match Report,Leg 2 of 2; Juventus won
 2014-2015,Final,,Sat,2015-06-06,20:45,Juventusit,1–3,esBarcelona,"70,442",Olympiastadion Berlin (Neutral Site),Cüneyt Çakιr,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2013-2014,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2013-2014,Group stage,1,Tue,2013-09-17,,Galatasaraytr,1–6,esReal Madrid,,Ali Sami Yen Spor Kompleksi,Mark Clattenburg,Match Report,
 2013-2014,Group stage,1,Tue,2013-09-17,,Real Sociedades,0–2,uaShakhtar,,Anoeta,Ovidiu Haţegan,Match Report,
 2013-2014,Group stage,1,Tue,2013-09-17,,Bayern Munichde,3–0,ruCSKA Moscow,,Fußball Arena München,Gianluca Rocchi,Match Report,
@@ -1331,8 +1322,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2013-2014,Semi-finals,,Tue,2014-04-29,,Bayern Munichde,0–4,esReal Madrid,,Fußball Arena München,Pedro Proença,Match Report,Leg 2 of 2; Real Madrid won
 2013-2014,Semi-finals,,Wed,2014-04-30,,Chelseaeng,1–3,esAtlético Madrid,,Stamford Bridge,Nicola Rizzoli,Match Report,Leg 2 of 2; Atlético Madrid won
 2013-2014,Final,,Sat,2014-05-24,,Real Madrides,4–1,esAtlético Madrid,,Estádio do Sport Lisboa e Benfica (Neutral Site),Björn Kuipers,Match Report,Required Extra Time
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2012-2013,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2012-2013,Group stage,1,Tue,2012-09-18,,Málagaes,3–0,ruZenit,,La Rosaleda,Mark Clattenburg,Match Report,
 2012-2013,Group stage,1,Tue,2012-09-18,,Dinamo Zagrebhr,0–2,ptPorto,,Stadion Maksimir,Daniele Orsato,Match Report,
 2012-2013,Group stage,1,Tue,2012-09-18,,Montpellierfr,1–2,engArsenal,,La Mosson,Velasco Carballo,Match Report,
@@ -1465,8 +1455,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2012-2013,Semi-finals,,Tue,2013-04-30,,Real Madrides,2–0,deDortmund,,Estadio Santiago Bernabéu,Howard Webb,Match Report,Leg 2 of 2; Dortmund won
 2012-2013,Semi-finals,,Wed,2013-05-01,,Barcelonaes,0–3,deBayern Munich,,Camp Nou,Damir Skomina,Match Report,Leg 2 of 2; Bayern Munich won
 2012-2013,Final,,Sat,2013-05-25,,Dortmundde,1–2,deBayern Munich,,Wembley Stadium (Neutral Site),Nicola Rizzoli,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2011-2012,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2011-2012,Group stage,1,Tue,2011-09-13,,Portopt,2–1,uaShakhtar,,Estádio do Dragão,Felix Brych,Match Report,
 2011-2012,Group stage,1,Tue,2011-09-13,,Olympiacosgr,0–1,frMarseille,,Stadio Georgios Karaiskakis,Pedro Proença,Match Report,
 2011-2012,Group stage,1,Tue,2011-09-13,,Barcelonaes,2–2,itMilan,,Camp Nou,Martin Atkinson,Match Report,
@@ -1599,8 +1588,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2011-2012,Semi-finals,,Tue,2012-04-24,,Barcelonaes,2–2,engChelsea,,Camp Nou,Cüneyt Çakır,Match Report,Leg 2 of 2; Chelsea won
 2011-2012,Semi-finals,,Wed,2012-04-25,,Real Madrides,(1)2–1(3),deBayern Munich,,Estadio Santiago Bernabéu,Viktor Kassai,Match Report,Leg 2 of 2; Bayern Munich won; Bayern Munich won on penalty kicks following extra time
 2011-2012,Final,,Sat,2012-05-19,,Bayern Munichde,(3)1–1(4),engChelsea,,Fußball Arena München (Neutral Site),Pedro Proença,Match Report,Chelsea won on penalty kicks following extra time
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2010-2011,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2010-2011,Group stage,1,Tue,2010-09-14,,Lyonfr,1–0,deSchalke 04,,Stade de Gerland,Ivan Bebek,Match Report,
 2010-2011,Group stage,1,Tue,2010-09-14,,Manchester Utdeng,0–0,sctRangers,,Old Trafford,Olegário Benquerença,Match Report,
 2010-2011,Group stage,1,Tue,2010-09-14,,Bursasportr,0–4,esValencia,,Bursa Atatürk,Svein Oddvar Moen,Match Report,
@@ -1733,8 +1721,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2010-2011,Semi-finals,,Tue,2011-05-03,,Barcelonaes,1–1,esReal Madrid,,Camp Nou,Frank de Bleeckere,Match Report,Leg 2 of 2; Barcelona won
 2010-2011,Semi-finals,,Wed,2011-05-04,,Manchester Utdeng,4–1,deSchalke 04,,Old Trafford,Pedro Proença,Match Report,Leg 2 of 2; Manchester Utd won
 2010-2011,Final,,Sat,2011-05-28,,Barcelonaes,3–1,engManchester Utd,,Wembley Stadium (Neutral Site),Viktor Kassai,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2009-2010,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2009-2010,Group stage,1,Tue,2009-09-15,,Zürichch,2–5,esReal Madrid,,Stadion Letzigrund,Martin Atkinson,Match Report,
 2009-2010,Group stage,1,Tue,2009-09-15,,Marseillefr,1–2,itMilan,,Stade Vélodrome,Claus Bo Larsen,Match Report,
 2009-2010,Group stage,1,Tue,2009-09-15,,Wolfsburgde,3–1,ruCSKA Moscow,,VfL Wolfsburg Arena,Stéphane Lannoy,Match Report,
@@ -1867,8 +1854,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2009-2010,Semi-finals,,Tue,2010-04-27,,Lyonfr,0–3,deBayern Munich,,Stade de Gerland,Massimo Busacca,Match Report,Leg 2 of 2; Bayern Munich won
 2009-2010,Semi-finals,,Wed,2010-04-28,,Barcelonaes,1–0,itInter,,Camp Nou,Frank de Bleeckere,Match Report,Leg 2 of 2; Inter won
 2009-2010,Final,,Sat,2010-05-22,,Bayern Munichde,0–2,itInter,,Estadio Santiago Bernabéu (Neutral Site),Howard Webb,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2008-2009,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2008-2009,Group stage,1,Tue,2008-09-16,,Romait,1–2,roCFR Cluj,,Stadio Olimpico,Iouri Baskakov,Match Report,
 2008-2009,Group stage,1,Tue,2008-09-16,,Chelseaeng,4–0,frBordeaux,,Stamford Bridge,Pieter Vink,Match Report,
 2008-2009,Group stage,1,Tue,2008-09-16,,Werder Bremende,0–0,cyAnorthosis,,Weserstadion,Craig Thomson,Match Report,
@@ -2001,8 +1987,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2008-2009,Semi-finals,,Tue,2009-05-05,,Arsenaleng,1–3,engManchester Utd,,Arsenal Stadium,Roberto Rosetti,Match Report,Leg 2 of 2; Manchester Utd won
 2008-2009,Semi-finals,,Wed,2009-05-06,,Chelseaeng,1–1,esBarcelona,,Stamford Bridge,Tom Henning Øvrebø,Match Report,Leg 2 of 2; Barcelona won
 2008-2009,Final,,Wed,2009-05-27,,Barcelonaes,2–0,engManchester Utd,,Stadio Olimpico (Neutral Site),Massimo Busacca,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2007-2008,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2007-2008,Group stage,1,Tue,2007-09-18,,Olympiacosgr,1–1,itLazio,,Stadio Georgios Karaiskakis,Eric Braamhaar,Match Report,
 2007-2008,Group stage,1,Tue,2007-09-18,,Marseillefr,2–0,trBeşiktaş,,Stade Vélodrome,Matteo Trefoloni,Match Report,
 2007-2008,Group stage,1,Tue,2007-09-18,,Schalke 04de,0–1,esValencia,,Arena AufSchalke,Jan Wegereef,Match Report,
@@ -2135,8 +2120,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2007-2008,Semi-finals,,Tue,2008-04-29,,Manchester Utdeng,1–0,esBarcelona,,Old Trafford,Herbert Fandel,Match Report,Leg 2 of 2; Manchester Utd won
 2007-2008,Semi-finals,,Wed,2008-04-30,,Chelseaeng,3–2,engLiverpool,,Stamford Bridge,Roberto Rosetti,Match Report,Leg 2 of 2; Chelsea won; Required Extra Time
 2007-2008,Final,,Wed,2008-05-21,,Manchester Utdeng,(6)1–1(5),engChelsea,,Stadion Luzhniki (Neutral Site),Ľuboš Michel,Match Report,Manchester Utd won on penalty kicks following extra time
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2006-2007,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2006-2007,Group stage,1,Tue,2006-09-12,,Romait,4–0,uaShakhtar,,Stadio Olimpico,Bertrand Layec,Match Report,
 2006-2007,Group stage,1,Tue,2006-09-12,,Olympiacosgr,2–4,esValencia,,Stadio Georgios Karaiskakis,Terje Hauge,Match Report,
 2006-2007,Group stage,1,Tue,2006-09-12,,Sporting CPpt,1–0,itInter,,José Alvalade,Alain Hamer,Match Report,
@@ -2269,8 +2253,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2006-2007,Semi-finals,,Tue,2007-05-01,,Liverpooleng,(4)1–0(1),engChelsea,,Anfield,Mejuto González,Match Report,Leg 2 of 2; Liverpool won; Liverpool won on penalty kicks following extra time
 2006-2007,Semi-finals,,Wed,2007-05-02,,Milanit,3–0,engManchester Utd,,Stadio Giuseppe Meazza,Frank de Bleeckere,Match Report,Leg 2 of 2; Milan won
 2006-2007,Final,,Wed,2007-05-23,,Milanit,2–1,engLiverpool,,OAKA Spiros Louis (Neutral Site),Herbert Fandel,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2005-2006,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2005-2006,Group stage,1,Tue,2005-09-13,,Milanit,3–1,trFenerbahçe,,Stadio Giuseppe Meazza,Mike Riley,Match Report,
 2005-2006,Group stage,1,Tue,2005-09-13,,Artmediask,0–1,itInter,,Tehelné Pole,Éric Poulat,Match Report,
 2005-2006,Group stage,1,Tue,2005-09-13,,Lyonfr,3–0,esReal Madrid,,Stade de Gerland,Massimo De Santis,Match Report,
@@ -2403,8 +2386,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2005-2006,Semi-finals,,Tue,2006-04-25,,Villarreales,0–0,engArsenal,,Estadio El Madrigal,Valentin Ivanov,Match Report,Leg 2 of 2; Arsenal won
 2005-2006,Semi-finals,,Wed,2006-04-26,,Barcelonaes,0–0,itMilan,,Camp Nou,Markus Merk,Match Report,Leg 2 of 2; Barcelona won
 2005-2006,Final,,Wed,2006-05-17,,Barcelonaes,2–1,engArsenal,,Stade de France (Neutral Site),Terje Hauge,Match Report,
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2004-2005,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2004-2005,Group stage,1,Tue,2004-09-14,,Arsenaleng,1–0,nlPSV Eindhoven,,Highbury,Domenico Messina,Match Report,
 2004-2005,Group stage,1,Tue,2004-09-14,,Valenciaes,2–0,beAnderlecht,,Estadi de Mestalla,Bertrand Layec,Match Report,
 2004-2005,Group stage,1,Tue,2004-09-14,,Panathinaikosgr,2–1,noRosenborg,,Apostolos Nikolaidis,Paul Allaerts,Match Report,
@@ -2537,8 +2519,7 @@ Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbi
 2004-2005,Semi-finals,,Tue,2005-05-03,,Liverpooleng,1–0,engChelsea,,Anfield,Ľuboš Michel,Match Report,Leg 2 of 2; Liverpool won
 2004-2005,Semi-finals,,Wed,2005-05-04,,PSV Eindhovennl,3–1,itMilan,,PSV Stadion,Terje Hauge,Match Report,Leg 2 of 2; Milan won
 2004-2005,Final,,Wed,2005-05-25,,Milanit,(2)3–3(3),engLiverpool,,Atatürk Olimpiyat Stadium (Neutral Site),Mejuto González,Match Report,Liverpool won on penalty kicks following extra time
-Temporada,Ronda,Wk,Dia,Fecha,Hora,Local,Resultado,Visitante,Público,Evento,Arbitro,Reporte,Notas
-2003-2004,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
+Temporada,Round,Wk,Day,Date,Time,Home,Score,Away,Attendance,Venue,Referee,Match Report,Notes
 2003-2004,Group stage,1,Tue,2003-09-16,,Club Bruggebe,1–1,esCelta Vigo,,Jan Breydelstadion,Giorgos Kasnaferis,Match Report,
 2003-2004,Group stage,1,Tue,2003-09-16,,Sparta Praguecz,0–1,engChelsea,,Stadion Letná,Helmut Fleischer,Match Report,
 2003-2004,Group stage,1,Tue,2003-09-16,,Partizanrs,1–1,ptPorto,,Stadion FK Partizan,Michal Benes,Match Report,

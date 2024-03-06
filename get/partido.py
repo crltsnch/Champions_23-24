@@ -59,7 +59,7 @@ for url in urls:
     filas = table.find_all('tr')
 
     # Iteramos sobre las filas y obtenemos los datos de cada celda
-    datos_tabla = [encabezados]  # Agregamos la fila de encabezados
+    datos_tabla = []
     for fila in filas:
         # Obtenemos las celdas de la fila
         celdas = fila.find_all(['th', 'td'])
@@ -85,6 +85,7 @@ for url in urls:
 print(datos_totales)
 
 # Escribimos los datos en un archivo CSV
+datos_totales.insert(0, encabezados)
 ruta_csv = './data/partido.csv'
 with open(ruta_csv, 'w', newline='', encoding='utf-8') as archivo_csv:
     escritor_csv = csv.writer(archivo_csv)
