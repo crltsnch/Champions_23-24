@@ -2,6 +2,9 @@ import csv
 import requests
 from bs4 import BeautifulSoup
 
+# Encabezados de las columnas
+encabezados = ['Temporada','Ronda','Wk','Dia','Fecha','Hora','Local','Resultado','Visitante','Público','Evento','Arbitro','Reporte','Notas']
+
 # URLs de diferentes temporadas de UEFA Champions League
 urls = [
     'https://fbref.com/en/comps/8/2022-2023/schedule/2022-2023-Champions-League-Scores-and-Fixtures',
@@ -26,6 +29,16 @@ urls = [
     'https://fbref.com/en/comps/8/2003-2004/schedule/2003-2004-Champions-League-Scores-and-Fixtures',
 ]
 
+# Función para eliminar la columna de la posición 2 en las filas que cumplen la condición
+def eliminar_columna_group_stage(datos_tabla):
+    indices_a_eliminar = [i for i, fila in enumerate(datos_tabla[1:], start=1) if fila[2] == 'group stage']
+    for i in indices_a_eliminar:
+        if len(datos_tabla[i]) > 2:
+            del datos_tabla[i][2]
+        else:
+            datos_tabla[i].insert(2, '')  # Agregar una cadena vacía si la columna no existe
+    return datos_tabla
+
 # Creamos una lista para almacenar los datos de todas las temporadas
 datos_totales = []
 
@@ -41,28 +54,34 @@ for url in urls:
 
     # Buscamos la sección de texto que contiene la información de las fases eliminatorias
     table = soup.find('table', {'class': 'stats_table', 'id': 'sched_all'})
-     
+
     # Obtenemos las filas de la tabla
     filas = table.find_all('tr')
 
     # Iteramos sobre las filas y obtenemos los datos de cada celda
+    datos_tabla = [encabezados]  # Agregamos la fila de encabezados
     for fila in filas:
         # Obtenemos las celdas de la fila
         celdas = fila.find_all(['th', 'td'])
         # Eliminamos las celdas que contienen 'xg' en el atributo 'data-stat' ya que no están en todas las temporadas
-        celdas = [celda for celda in celdas if 'xg' not in celda.get('data-stat')]
+        celdas = [celda for celda in celdas if 'xg' not in celda.get('data-stat') and 'wk' not in celda.get('data-stat')]
         # Extraemos el texto de cada celda y lo agregamos a la lista de datos, eliminando los espacios en blanco
-        datos_fila = [celda.get_text(strip=True) for celda in celdas if celda.get_text(strip=True)]
-        if datos_fila:
-            # Agregamos la temporada como la primera columna en cada fila, extrayéndola de la URL directamente
-            temporada = url.split('/')[-3]
-            datos_fila.insert(0, temporada)
-            if datos_fila not in datos_totales:
-                # Agregamos la fila a la lista de datos totales evitando agregar el encabezado de la tabla más de una vez
-                datos_totales.append(datos_fila)
+        datos_fila = [celda.get_text(strip=True) if celda.get_text(strip=True) else '' for celda in celdas]
+        # Agregamos la temporada como la primera columna en cada fila, extrayéndola de la URL directamente
+        temporada = url.split('/')[-3]
+        datos_fila.insert(0, temporada)
+        datos_tabla.append(datos_fila)
 
-# Cambiamos el encabezado de la primera columna
-datos_totales[0][0] = 'Temporada'
+    # Aplicamos la función para eliminar la columna de la posición 2 en las filas que cumplen la condición
+    datos_tabla = eliminar_columna_group_stage(datos_tabla)
+
+    # Cambiamos el encabezado de la primera columna
+    datos_tabla[0][0] = 'Temporada'
+
+    # Agregamos los datos de la tabla a la lista general
+    datos_totales.extend(datos_tabla)
+
+# Imprimir la lista final
 print(datos_totales)
 
 # Escribimos los datos en un archivo CSV
