@@ -36,12 +36,11 @@ for url in urls:
     r = requests.get(url)
     # Extraemos el HTML de la respuesta
     html = r.text
-
     # Creamos un objeto BeautifulSoup
     soup = BeautifulSoup(html, 'html.parser')
 
     # Buscamos la sección de texto que contiene la información de las fases eliminatorias
-    html = soup.find('span', attrs={'data-label': 'Scores & Fixtures'}).find_next('table', id=lambda x: x and '_8_3' in x)
+    html = soup.find('table', {'class': 'stats_table', 'id': 'sched_all'})
      
     # Obtenemos las filas de la tabla
     filas = html.find_all('tr')
@@ -63,15 +62,15 @@ for url in urls:
                 datos_totales.append(datos_fila)
 
 # Cambiamos el encabezado de la primera columna
-datos_totales[0][0] = 'Season'
+datos_totales[0][0] = 'Temporada'
 print(datos_totales)
 
-'''# Escribimos los datos en un archivo CSV
-ruta_csv = 'data/partidos.csv'
+# Escribimos los datos en un archivo CSV
+ruta_csv = './data/partido.csv'
 with open(ruta_csv, 'w', newline='', encoding='utf-8') as archivo_csv:
     escritor_csv = csv.writer(archivo_csv)
     for fila in datos_totales:
         escritor_csv.writerow(fila)
 
 # Imprimimos un mensaje de éxito
-print(f"El archivo CSV '{ruta_csv.split('/')[-1]}' ha sido creado exitosamente.")'''
+print(f"El archivo CSV '{ruta_csv.split('/')[-1]}' ha sido creado exitosamente.")
