@@ -20,13 +20,12 @@ for temporada in temporadas:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Buscar la tabla que corresponde a la clase "wikitable" y estilo "text-align:enter"
-        tabla = soup.find_all('table', class_='min_width')
-        print(tabla)
+        tabla = soup.find_all('table', {'class':"min_width"})
 
         # Verificar si se encontró la tabla
         if tabla:
             # Obtener todas las filas y celdas de la tabla
-            rows = tabla[1].find_all('tr')
+            rows = tabla.find_all('tr')
 
             # Crear una lista para almacenar las filas de datos
             tabla_data = []
@@ -46,8 +45,8 @@ for temporada in temporadas:
         else:
             print('No se encontró la tabla')
 
-
-'''if len(resultados) > 0:
+'''
+if len(resultados) > 0:
     resultados.insert(0, headers)
     # Especificar el nombre del archivo CSV donde guardar la tabla
     file_name = './data/Jugador.csv'
@@ -56,4 +55,5 @@ for temporada in temporadas:
         writer.writerows(resultados)
     print(f'Se guardó la tabla en {file_name}')
 else:
-    print('La tabla no contiene datos.')'''
+    print('La tabla no contiene datos.')
+'''
