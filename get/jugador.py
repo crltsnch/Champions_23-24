@@ -1,7 +1,6 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-import csv
-from tabulate import tabulate
+import pandas as pd
 
 # Lista de temporadas
 temporadas = ['1992-1993', '1993-1994', '1994-1995', '1995-1996', '1996-1997',
@@ -15,8 +14,8 @@ options = webdriver.ChromeOptions()
 options.add_argument('--headless')  # Para ejecutar el navegador en segundo plano (sin interfaz gráfica)
 driver = webdriver.Chrome(options=options)
 
-# Lista para almacenar todas las tablas
-tabla_grande = []
+# Lista para almacenar todas las filas de datos
+datos_grandes = []
 
 encabezado = ['Temporada', '#', 'Jugador', 'País', 'Posc', 'Equipo', 'Edad', 'Nacimiento',
               'PJ', 'Titular', 'Mín', '90 s', 'Gls.', 'Ass', 'G+A', 'G-TP', 'TP', 'TPint',
@@ -49,21 +48,15 @@ for temporada in temporadas:
 
         # Verificar si la tabla se encontró
         if table:
-            # Lista para almacenar los datos de una tabla
-            tabla_temporada = []
-
             # Iterar sobre las filas de la tabla
             for i, row in enumerate(table.find_all('tr')):
                 # Ignorar las primeras 2 filas (encabezados)
-                if i <2:
+                if i < 2:
                     continue
                 # Obtener los datos de cada celda en la fila
                 cells = row.find_all(['th', 'td'])
-                row_data = [temporada]+[cell.get_text(strip=True) for cell in cells]
-                tabla_temporada.append(row_data)
-
-            # Almacenar la tabla de la temporada en la tabla grande
-            tabla_grande.append(tabla_temporada)
+                row_data = [temporada] + [cell.get_text(strip=True) for cell in cells]
+                datos_grandes.append(row_data)
 
         else:
             print(f"No se encontró la tabla para la temporada {temporada}.")
@@ -72,19 +65,16 @@ for temporada in temporadas:
 
 # Cerrar el navegador al final del script
 driver.quit()
-print(tabulate(tabla_grande, headers='firstrow', tablefmt='grid'))
 
-'''# Guarda la fila de encabezado en un archivo CSV
-if len(tabla_grande) > 0:
-    tabla_grande.insert(0, encabezado)
-    archivo_csv = './data/jugador.csv'
-    print(tabulate(tabla_grande, headers='firstrow', tablefmt='grid'))
-    with open(archivo_csv, 'w', newline='', encoding='utf-8') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        # Escribe las filas de datos
-        csv_writer.writerows(tabla_grande)
+# Convertir la lista de datos a un DataFrame de pandas
+df = pd.DataFrame(datos_grandes, columns=encabezado)
 
-print(f"Tabla grande guardada en {archivo_csv}")'''
+# Guardar el DataFrame en un archivo CSV
+archivo_csv = './data/jugador.csv'
+df.to_csv(archivo_csv, index=False, encoding='utf-8')
+
+print(f"Datos grandes guardados en {archivo_csv}")
+
 
 
 '''import csv
