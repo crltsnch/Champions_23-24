@@ -15,7 +15,7 @@ datos_grandes = []
 
 encabezado = ['Temporada', '#', 'Jugador', 'País', 'Posc', 'Equipo', 'Edad', 'Nacimiento',
               'PJ', 'Titular', 'Mín', '90 s', 'Gls.', 'Ass', 'G+A', 'G-TP', 'TP', 'TPint',
-              'TA', 'TR', 'xG', 'npxG', 'xAG', 'npxG+xAG', 'PrgC', 'PrgP', 'Gls90.', 'Ast90',
+              'TA', 'TR', 'xG', 'npxG', 'xAG', 'npxG+xAG', 'PrgC', 'PrgP', 'PrgR', 'Gls90.', 'Ast90',
               'G+A90', 'G-TP90', 'G+A-TP90', 'xG90', 'xAG90', 'xG+xAG90', 'npxG90', 'npxG+xAG90', 'Partidos']
 
 # Iterar sobre las temporadas
@@ -36,7 +36,7 @@ for temporada in temporadas:
     soup = BeautifulSoup(html, 'html.parser')
 
     # Encontrar el contenedor con la clase "table_container" y el ID "div_stats_standard"
-    container = soup.find('div', {'class': 'table_container is_setup', 'id': 'div_stats_standard'})
+    container = soup.find('div', {'class': 'table_container', 'id': 'div_stats_standard'})
 
     # Verificar si el contenedor se encontró
     if container:
