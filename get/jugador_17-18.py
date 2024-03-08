@@ -3,11 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # Lista de temporadas
-temporadas = ['1992-1993', '1993-1994', '1994-1995', '1995-1996', '1996-1997',
-              '1997-1998', '1998-1999', '1999-2000', '2000-2001', '2001-2002',
-              '2002-2003', '2003-2004', '2004-2005', '2005-2006', '2006-2007',
-              '2007-2008', '2008-2009', '2009-2010', '2010-2011', '2011-2012',
-              '2012-2013', '2013-2014', '2014-2015', '2015-2016', '2016-2017']
+temporadas = ['2017-2018', '2018-2019', '2019-2020', '2020-2021', '2021-2022', '2022-2023', '2023-2024']
 
 # Configuración del navegador
 options = webdriver.ChromeOptions()
@@ -19,7 +15,8 @@ datos_grandes = []
 
 encabezado = ['Temporada', '#', 'Jugador', 'País', 'Posc', 'Equipo', 'Edad', 'Nacimiento',
               'PJ', 'Titular', 'Mín', '90 s', 'Gls.', 'Ass', 'G+A', 'G-TP', 'TP', 'TPint',
-              'TA', 'TR', 'Gls.90', 'Ast90', 'G+A90', 'G-TP90', 'G+A-TP90', 'Partidos']
+              'TA', 'TR', 'xG', 'npxG', 'xAG', 'npxG+xAG', 'PrgC', 'PrgP', 'Gls90.', 'Ast90',
+              'G+A90', 'G-TP90', 'G+A-TP90', 'xG90', 'xAG90', 'xG+xAG90', 'npxG90', 'npxG+xAG90', 'Partidos']
 
 # Iterar sobre las temporadas
 for temporada in temporadas:
@@ -39,7 +36,7 @@ for temporada in temporadas:
     soup = BeautifulSoup(html, 'html.parser')
 
     # Encontrar el contenedor con la clase "table_container" y el ID "div_stats_standard"
-    container = soup.find('div', {'class': 'table_container', 'id': 'div_stats_standard'})
+    container = soup.find('div', {'class': 'table_container is_setup', 'id': 'div_stats_standard'})
 
     # Verificar si el contenedor se encontró
     if container:
@@ -70,7 +67,7 @@ driver.quit()
 df = pd.DataFrame(datos_grandes, columns=encabezado)
 
 # Guardar el DataFrame en un archivo CSV
-archivo_csv = './data/jugador.csv'
+archivo_csv = './data/jugador2.csv'
 df.to_csv(archivo_csv, index=False, encoding='utf-8')
 
 print(f"Datos grandes guardados en {archivo_csv}")
