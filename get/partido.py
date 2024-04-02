@@ -7,6 +7,7 @@ encabezados = ['Temporada','Ronda','Wk','Dia','Fecha','Hora','Local','Resultado'
 
 # URLs de diferentes temporadas de UEFA Champions League
 urls = [
+    'https://fbref.com/en/comps/8/2023-2024/schedule/2023-2024-Champions-League-Scores-and-Fixtures',
     'https://fbref.com/en/comps/8/2022-2023/schedule/2022-2023-Champions-League-Scores-and-Fixtures',
     'https://fbref.com/en/comps/8/2021-2022/schedule/2021-2022-Champions-League-Scores-and-Fixtures',
     'https://fbref.com/en/comps/8/2020-2021/schedule/2020-2021-Champions-League-Scores-and-Fixtures',
