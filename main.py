@@ -4,7 +4,7 @@ from get.jugador_17_18 import Jugadores2Extractor
 from get.jugador import JugadoresExtractor
 
 def main():
-     # Extracción y guardado de datos de entrenadores
+    # Extracción y guardado de datos de entrenadores
     entrenador_url = 'https://www.bdfutbol.com/es/t/trcompCHA.html?p=coaches&t=T'
     entrenador_extractor = EntrenadorExtractor(entrenador_url)
     entrenador_tabla_data = entrenador_extractor.extraer_datos()
