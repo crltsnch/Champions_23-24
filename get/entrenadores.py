@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from tabulate import tabulate
 from urllib.parse import urlparse, unquote
 
+
 class EntrenadorExtractor:
     def __init__(self, url):
         self.url = url
