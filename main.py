@@ -141,6 +141,3 @@ def main():
     trayectoria.cargar_ids_entrenador('./data/entrenador.csv') 
     trayectoria.extraer_datos()
     trayectoria.guardar_csv()
-
-if __name__ == "__main__":
-    main()
