@@ -2,7 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
 
-class JugadoresExtractor:
+class Jugadores2Extractor:
     def __init__(self, temporadas):
         self.temporadas = temporadas
         self.options = webdriver.ChromeOptions()
