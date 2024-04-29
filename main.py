@@ -6,7 +6,7 @@ from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 
 def main():
-    '''# Extracción y guardado de datos de entrenadores
+    # Extracción y guardado de datos de entrenadores
     entrenador_url = 'https://www.bdfutbol.com/es/t/trcompCHA.html?p=coaches&t=T'
     entrenador_extractor = EntrenadorExtractor(entrenador_url)
     entrenador_tabla_data = entrenador_extractor.extraer_datos()
@@ -49,7 +49,7 @@ def main():
     '2003-2004']
     scraper = PartidoScraper()
     scraper.scrape_data(temporadas)
-    scraper.guardar_datos_csv('./data/partido.csv')'''
+    scraper.guardar_datos_csv('./data/partido.csv')
     
     urls = ['https://www.bdfutbol.com/es/l/l93816.html', 'https://www.bdfutbol.com/es/l/l93761.html', 'https://www.bdfutbol.com/es/l/l95279.html',
     'https://www.bdfutbol.com/es/l/l1566.html', 'https://www.bdfutbol.com/es/l/l99573.html', 'https://www.bdfutbol.com/es/l/l3685.html',
