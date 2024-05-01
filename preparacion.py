@@ -10,34 +10,32 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# #### Entrenador.csv
+#Entrenador.csv
 
-# In[16]:
+class Entrenador:
+    def __init__(self, ruta):
+        self.df = pd.read_csv(ruta)
+    
+    def diccionario_entrenadores(self):
+        diccionario_entrenadores = self.df.set_index('Apodo')['idEntrenador'].to_dict()
+        return diccionario_entrenadores
+    
+    def procesar(self):
+        self.df.drop(['Pais'], axis=1, inplace=True)
+        self.df.head(10)
+        return self.df
+
+#instanciamos
+entrenador = Entrenador('data/entrenador.csv')
+diccionario_equipos = entrenador.diccionario_entrenadores()
+df_entrenador = entrenador.procesar()
+
+print(df_entrenador.head(10))
 
 
-df1 = pd.read_csv('data/entrenador.csv')
-df1.head(10)
 
-
-# In[17]:
-
-
-#Diccionario entrenadores
-diccionario_entrenadores = df1.set_index('Apodo')['idEntrenador'].to_dict()
-print(diccionario_entrenadores)
-
-
-# In[18]:
-
-
-df1.drop(['Pais'], axis=1, inplace=True)
-df1.head(10)
-
-
-# #### Equipo.csv
-
-# In[19]:
-
+'''
+#Equipo.csv
 
 df2 = pd.read_csv('data/equipo.csv')
 df2.head()
@@ -312,7 +310,7 @@ jugadores.head(20000)
 
 
 #Eliminar columnas que no necesito
-colum_eliminar = ['#', 'Nacimiento', '90 s', 'G+A', 'G-TP', 'Gls.90', 'Ast90', 'G+A90', 'G-TP90',
+colum_eliminar = ['País', 'Posc', '#', 'Nacimiento', '90 s', 'G+A', 'G-TP', 'Gls.90', 'Ast90', 'G+A90', 'G-TP90',
        'G+A-TP90', 'Partidos', 'xG90', 'xAG90', 'xG+xAG90', 'npxG90', 'npxG+xAG90', 'Gls90.', 'xAG', 'npxG+xAG']
 
 jugadores = jugadores.drop(columns=colum_eliminar)
@@ -683,9 +681,8 @@ df3.head(10)
 
 # In[62]:
 
-
-'''Porcentaje que el equipo1 que es el local ha ganado al equipo2 (visitante) en todas las disputas que han tenido esos dos equipos,
-independientemente de si el equipo1 es local o visitante'''
+#Porcentaje que el equipo1 que es el local ha ganado al equipo2 (visitante) en todas las disputas que han tenido esos dos equipos,
+independientemente de si el equipo1 es local o visitante
 
 def calcular_porcentaje_equipo1_ganado(row):
     equipo_local = row['Local']
@@ -755,7 +752,7 @@ df3.head(10)
 # In[64]:
 
 
-'''Partidos ganados por el equipo1 en esa temporada'''
+#Partidos ganados por el equipo1 en esa temporada
 
 def calcular_porcentaje_equipo1_ganado_temporada(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
@@ -791,7 +788,7 @@ df3.head(10)
 # In[65]:
 
 
-'''Partidos ganados por el equipo1 en esa temporada pero solo como local'''
+#Partidos ganados por el equipo1 en esa temporada pero solo como local
 
 def equipo1_ganado_temporada_local(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
@@ -827,7 +824,7 @@ df3.head(10)
 # In[66]:
 
 
-'''Partidos empatado esa temporada pero solo jugando como local'''
+#Partidos empatado esa temporada pero solo jugando como local
 
 def equipo1_empatado_temporada_local(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
@@ -863,7 +860,7 @@ df3.head(10)
 # In[67]:
 
 
-'''Partidos perdido esa temporada pero solo jugando como local'''
+#Partidos perdido esa temporada pero solo jugando como local
 
 def equipo1_perdido_temporada_local(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
@@ -899,7 +896,7 @@ df3.head(10)
 # In[68]:
 
 
-'''Media de partidos ganados'''
+#Media de partidos ganados
 
 df3['1_Media_G'] =( df3.apply(calcular_porcentaje_equipo1_ganado_temporada, axis=1) / 100).round(2)
 df3['1_Media_G_Local'] = (df3.apply(equipo1_ganado_temporada_local, axis=1) / 100).round(2)
@@ -911,7 +908,7 @@ df3.head(10)
 # In[69]:
 
 
-'''Media de goles del equipo 1 por partidos jugados en cada temporada'''
+#Media de goles del equipo 1 por partidos jugados en cada temporada
 
 def media_goles_equipo1(row):
     # Obtener el equipo 1 (equipo local) de la fila actual y la temporada correspondiente
@@ -958,7 +955,7 @@ jugadores.tail(10)
 # In[71]:
 
 
-'''Valor total de los jugadores para el equipo local en esa temporada'''
+#Valor total de los jugadores para el equipo local en esa temporada
 
 for index, row in df3.iterrows():
     temporada_actual = row['Temporada']
@@ -979,7 +976,7 @@ df3.head(10)
 # In[72]:
 
 
-'''Media del valor de los jugadores del equipo local en esa temporada'''
+#Media del valor de los jugadores del equipo local en esa temporada
 
 for index, row in df3.iterrows():
     temporada_actual = row['Temporada']
@@ -1002,7 +999,7 @@ df3.head(10)
 # In[73]:
 
 
-'''Partidos ganados por el equipo2 en esa temporada'''
+#Partidos ganados por el equipo2 en esa temporada
 
 def calcular_porcentaje_equipo2_ganado_temporada(row):
     # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
@@ -1039,7 +1036,7 @@ df3.head(10)
 # In[74]:
 
 
-'''Partidos ganados por el equipo2 en esa temporada pero solo como local'''
+#Partidos ganados por el equipo2 en esa temporada pero solo como local
 
 def equipo2_ganado_temporada_local(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
@@ -1075,7 +1072,7 @@ df3.head(10)
 # In[75]:
 
 
-'''Partidos empatado por el equipo2 esa temporada pero solo jugando como local'''
+#Partidos empatado por el equipo2 esa temporada pero solo jugando como local
 def equipo2_empatado_temporada_local(row):
     # Obtener el equipo 1 de la fila actual y la temporada correspondiente
     equipo2 = row['Visitante']
@@ -1107,7 +1104,7 @@ df3['%_2_E_Temporada_L'] = df3.apply(equipo2_empatado_temporada_local, axis=1).r
 # In[76]:
 
 
-'''Partidos perido esa temporada pero solo jugando como local'''
+#Partidos perido esa temporada pero solo jugando como local
 def equipo2_perdido_temporada_local(row):
     # Obtener el equipo 2 de la fila actual y la temporada correspondiente
     equipo2 = row['Visitante']
@@ -1139,7 +1136,7 @@ df3['%_2_P_Temporada_L'] = df3.apply(equipo2_perdido_temporada_local, axis=1).ro
 # In[77]:
 
 
-'''Media de partidos ganados'''
+#Media de partidos ganados
 
 df3['2_Media_G'] =( df3.apply(calcular_porcentaje_equipo2_ganado_temporada, axis=1) / 100).round(2)
 df3['2_Media_G_Local'] = (df3.apply(equipo2_ganado_temporada_local, axis=1) / 100).round(2)
@@ -1148,7 +1145,7 @@ df3['2_Media_G_Local'] = (df3.apply(equipo2_ganado_temporada_local, axis=1) / 10
 # In[78]:
 
 
-'''Media de goles del equipo 2 por partidos jugados en cada temporada'''
+#Media de goles del equipo 2 por partidos jugados en cada temporada
 
 def media_goles_equipo2(row):
     # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
@@ -1187,7 +1184,7 @@ df3.head(10)
 # In[79]:
 
 
-'''Valor total de los jugadores para el equipo visitante en esa temporada'''
+#Valor total de los jugadores para el equipo visitante en esa temporada
 for index, row in df3.iterrows():
     temporada_actual = row['Temporada']
     equipo2 = row['Visitante']
@@ -1205,7 +1202,7 @@ for index, row in df3.iterrows():
 # In[80]:
 
 
-'''Media del valor de los jugadores del equipo viistante en esa temporada'''
+#Media del valor de los jugadores del equipo viistante en esa temporada
 for index, row in df3.iterrows():
     temporada_actual = row['Temporada']
     equipo2 = row['Visitante']
@@ -1413,8 +1410,8 @@ with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
 print("Diccionario id jugadores guardado")
 
 
-# In[101]:
+# In[102]:
 
 
-get_ipython().system('jupyter nbconvert --to script preparacion.ipynb')
-
+#!jupyter nbconvert --to script preparacion.ipynb
+'''
