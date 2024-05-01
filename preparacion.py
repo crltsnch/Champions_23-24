@@ -1,13 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[15]:
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+
 
 
 #Entrenador.csv
@@ -30,86 +26,57 @@ entrenador = Entrenador('data/entrenador.csv')
 diccionario_equipos = entrenador.diccionario_entrenadores()
 df_entrenador = entrenador.procesar()
 
-print(df_entrenador.head(10))
 
 
-
-'''
+#----------------------------------------------------------------------------------------------------------------------------
 #Equipo.csv
 
-df2 = pd.read_csv('data/equipo.csv')
-df2.head()
+class Equipo:
+    def __init__(self, ruta):
+        self.df = pd.read_csv(ruta)
+    
+    def diccionario_equipos(self):
+        diccionario_equipos = self.df.set_index('Nombre')['idEquipo'].to_dict()
+        return diccionario_equipos
+    
+    def procesar(self):
+        self.df = self.df.drop(['Escudo'], axis=1)
+        return self.df
+    
+df_equipo = Equipo('data/equipo.csv')
+diccionario_equipos = df_equipo.diccionario_equipos()
+data_equipo = df_equipo.procesar()
 
-
-# In[20]:
-
-
-#Diccionario equipos
-diccionario_equipos = df2.set_index('Nombre')['idEquipo'].to_dict()
 print(diccionario_equipos)
+print(data_equipo.info())
 
 
-# In[21]:
 
 
-dic_equipos_original = diccionario_equipos.copy()
-
-
-# In[22]:
-
-
-df2.drop(['Escudo'], axis=1, inplace=True)
-df2.head(10)
-
-
-# ### Partido.csv
+#----------------------------------------------------------------------------------------------------------------------------
+#Partido.csv
 
 # - Eliminar filas duplicadas
 # - Añadir id por partido
 # - Eliminar columnas que no nos sirven
 # - Añadir id en local y visitante en vez de el nombre del equipo
 # - Añadir columnas bool victoria local, victoria visitante, empate
-
-# In[23]:
-
-
-df3 = pd.read_csv('data/partido.csv')
-df3.head(15)
-
-
-# In[24]:
-
-
-#Eliminar filas duplicadas
-df3 = df3[df3['Local'] != 'Home']
-df3.reset_index(drop=True, inplace=True)
-df3.head(135)
-
-
-# In[25]:
-
-
-df3.drop_duplicates()
-
-
-# In[26]:
-
-
-#Columnas que no necesito
-columnas_a_eliminar = ['Wk', 'Dia', 'Fecha', 'Hora', 'Reporte', 'Notas', 'Público', 'Arbitro']
-df3 = df3.drop(columns=columnas_a_eliminar)
-df3.head(37)
-
-
-# In[27]:
-
-
-#Id para los equipos
-# Función para obtener el ID del equipo
 from difflib import get_close_matches
 
-#Para que coincidan los nombres de los equipos con el diccionario
-claves_cambiadas = {'Borussia Dortmund': 'Dortmund', 'Deportivo de La Coruña': 'La Coruña', 'København': 'FC Copenhagen',
+class Partido:
+    def __init__(self, ruta):
+        self.df = pd.read_csv(ruta)
+    
+    def procesar1(self):
+        self.df = self.df[self.df['Local'] != 'Home']
+        self.df.reset_index(drop=True, inplace=True)
+        self.df = self.df.drop_duplicates()
+        columnas_a_eliminar = ['Wk', 'Dia', 'Fecha', 'Hora', 'Reporte', 'Notas', 'Público', 'Arbitro']
+        self.df = self.df.drop(columns=columnas_a_eliminar)
+        return self.df
+    
+    def procesar_diccionario_equipos(self, diccionario_equipos):
+        claves_cambiadas = {'Borussia Dortmund': 'Dortmund', 'Deportivo de La Coruña': 'La Coruña', 'København': 'FC Copenhagen',
                     'Sporting de Portugal': 'Sporting CP', 'Olympique de Marseille': 'Marseille', 'Olympique Lyonnais': 'Lyon',
                     'Bayern München': 'Bayern Munich', 'Bayer Leverkusen': 'Leverkusen', 'Brugge': 'Club Brugge',
                     'Red Bull Salzburg': 'RB Salzburg', 'PSG': 'Paris S-G', 'Lokomotiv Moskva': 'Loko Moscow',
@@ -121,103 +88,73 @@ claves_cambiadas = {'Borussia Dortmund': 'Dortmund', 'Deportivo de La Coruña': 
                     'Petržalka': 'Artmedia', 'Manchester United': 'Manchester Utd', 'Shakhtar Donetsk': 'Shakhtar', 'B68': 'B68 Toftir',
                     'Royal Antwerp': 'Antwerp', 'Newcastle':'Newcastle Utd'}
 
-for clave_antigua, clave_nueva in claves_cambiadas.items():
-    if clave_antigua in diccionario_equipos:
-        diccionario_equipos[clave_nueva] = diccionario_equipos.pop(clave_antigua)
+        for clave_antigua, clave_nueva in claves_cambiadas.items():
+            if clave_antigua in diccionario_equipos:
+                diccionario_equipos[clave_nueva] = diccionario_equipos.pop(clave_antigua)
 
-# Imprimir el diccionario actualizado
-print(diccionario_equipos)
+        def obtener_id_equipo(nombre_equipo):
+            # Buscar coincidencia exacta
+            if nombre_equipo in diccionario_equipos:
+                return diccionario_equipos[nombre_equipo]
+            
+            # Buscar coincidencias cercanas
+            matches = get_close_matches(nombre_equipo, diccionario_equipos.keys(), n=1, cutoff=0.8)
+            if matches:
+                return diccionario_equipos[matches[0]]
+            
+            # Si no hay coincidencia, devolver el nombre original
+            return nombre_equipo
 
-def obtener_id_equipo(nombre_equipo):
-    # Buscar coincidencia exacta
-    if nombre_equipo in diccionario_equipos:
-        return diccionario_equipos[nombre_equipo]
+        self.df['Local'] = self.df['Local'].astype(str)
+        self.df['Visitante'] = self.df['Visitante'].astype(str)
+
+        # Aplicar la función a las columnas 'Local' y 'Visitante'
+        self.df['Local'] = self.df['Local'].apply(obtener_id_equipo)
+        self.df['Visitante'] = self.df['Visitante'].apply(obtener_id_equipo)
+
+        return self.df
+
+    def procesar2(self):                
+        #Eliminar filas que se guardaron como nulas
+        print("Cantidad de filas con valores NaN:", self.df['Ronda'].isnull().sum())
+        self.df = self.df.dropna(subset=['Ronda'])
+        self.df = self.df.reset_index(drop=True)
+
+        # Añadir una nueva columna 'idPartido' con valores únicos
+        self.df['idPartido'] = range(1, len(self.df) + 1)
+
+        # Reorganizar las columnas para que 'idPartido' sea la primera
+        self.df = self.df[['idPartido'] + [col for col in self.df.columns if col != 'idPartido']]
+
+        num_filas_nan = self.df['Resultado'].isna().sum()
+        print("Número de filas con valores NaN en la columna 'Resultado':", num_filas_nan)
+
+        #Los valores nulos de los futuros partidos que se van a jugar voy a reemplazarlos por '0-0'
+        self.df['Resultado'] = self.df['Resultado'].fillna('0–0')
+
+        #Goles de local y visitante en diferentes columnas
+        self.df[['GolesLocal','GolesVisitante']] = self.df['Resultado'].str.split('–',expand=True)
+        self.df = self.df.drop(columns=['Resultado'])
+
+
+        #Columnas booleanas para saber si el equipo local o visitante ganó, empató o perdió
+        self.df['VictoriaLocal'] = (self.df['GolesLocal'] > self.df['GolesVisitante']).astype(int)
+        self.df['Empate'] = (self.df['GolesLocal'] == self.df['GolesVisitante']).astype(int)
+        self.df['VictoriaVisitante'] = (self.df['GolesLocal'] < self.df['GolesVisitante']).astype(int)
+
+        return self.df
     
-    # Buscar coincidencias cercanas
-    matches = get_close_matches(nombre_equipo, diccionario_equipos.keys(), n=1, cutoff=0.8)
-    if matches:
-        return diccionario_equipos[matches[0]]
-    
-    # Si no hay coincidencia, devolver el nombre original
-    return nombre_equipo
 
-df3['Local'] = df3['Local'].astype(str)
-df3['Visitante'] = df3['Visitante'].astype(str)
+df_partido = Partido('data/partido.csv')
+df_partido.procesar1()
+df_partido.procesar_diccionario_equipos(diccionario_equipos)  # Llamar al método en una instancia de Partido
+df_partido = df_partido.procesar2()
 
-# Aplicar la función a las columnas 'Local' y 'Visitante'
-df3['Local'] = df3['Local'].apply(obtener_id_equipo)
-df3['Visitante'] = df3['Visitante'].apply(obtener_id_equipo)
+print(df_partido.info())
 
 
-# Imprimir el DataFrame actualizado
-df3.head(37)
-
-
-# In[28]:
-
-
-df3['Local'].unique()
-
-
-# In[29]:
-
-
-#Eliminar filas que se guardaron como nulas
-print("Cantidad de filas con valores NaN:", df3['Ronda'].isnull().sum())
-df3 = df3.dropna(subset=['Ronda'])
-df3 = df3.reset_index(drop=True)
-
-df3.head(37)
-
-
-# In[30]:
-
-
-# Añadir una nueva columna 'idPartido' con valores únicos
-df3['idPartido'] = range(1, len(df3) + 1)
-
-# Reorganizar las columnas para que 'idPartido' sea la primera
-df3 = df3[['idPartido'] + [col for col in df3.columns if col != 'idPartido']]
-
-df3.head(115)
-
-
-# In[31]:
-
-
-num_filas_nan = df3['Resultado'].isna().sum()
-print("Número de filas con valores NaN en la columna 'Resultado':", num_filas_nan)
-
-
-# In[32]:
-
-
-#Los valores nulos de los futuros partidos que se van a jugar voy a reemplazarlos por '0-0'
-df3['Resultado'] = df3['Resultado'].fillna('0–0')
-
-df3.head(121)
-
-
-# In[33]:
-
-
-#Goles de local y visitante en diferentes columnas
-df3[['GolesLocal','GolesVisitante']] = df3['Resultado'].str.split('–',expand=True)
-df3 = df3.drop(columns=['Resultado'])
-df3.head(10)
-
-
-# In[34]:
-
-
-#Columnas booleanas para saber si el equipo local o visitante ganó, empató o perdió
-df3['VictoriaLocal'] = (df3['GolesLocal'] > df3['GolesVisitante']).astype(int)
-df3['Empate'] = (df3['GolesLocal'] == df3['GolesVisitante']).astype(int)
-df3['VictoriaVisitante'] = (df3['GolesLocal'] < df3['GolesVisitante']).astype(int)
-df3.head(10)
-
-
-# ### Trayectoria_entrenador.csv
+#----------------------------------------------------------------------------------------------------------------------------
+#Trayectoria_entrenador.csv
 
 # - IdEquipo en vez de el nombre
 # - Eliminar columnas que no nos sirven
@@ -273,7 +210,7 @@ df4['Equipo'] = df4['Equipo'].astype(str)
 df4['Equipo'] = df4['Equipo'].apply(id_equipo)
 df4.head(550)
 
-
+'''
 # ### Jugador.csv
 
 # - Juntar las dos tablas
