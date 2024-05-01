@@ -147,7 +147,7 @@ class Partido:
 
 df_partido = Partido('data/partido.csv')
 df_partido.procesar1()
-df_partido.procesar_diccionario_equipos(diccionario_equipos)  # Llamar al método en una instancia de Partido
+df_partido.procesar_diccionario_equipos(diccionario_equipos)
 df_partido = df_partido.procesar2()
 
 print(df_partido.info())
@@ -706,6 +706,275 @@ class Champions:
 
         return self.df1
 
+    def media_goles_equipo1(self, row):
+        # Obtener el equipo 1 (equipo local) de la fila actual y la temporada correspondiente
+        equipo1 = row['Local']
+        temporada = row['Temporada']
+        
+        # Excluir la fila actual del DataFrame
+        df_sin_fila_actual = self.df1.drop(row.name)
+        
+        # Filtrar filas de la temporada donde aparezca el equipo 1 (equipo local), independientemente de si es local o visitante
+        partidos_equipo1_temporada = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo1) | (df_sin_fila_actual['Visitante'] == equipo1)) & 
+                                                        (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Calcular el total de goles metidos por el equipo 1 (equipo local) en esa temporada
+        goles_local = partidos_equipo1_temporada[partidos_equipo1_temporada['Local'] == equipo1]['GolesLocal'].sum()
+        goles_visitante = partidos_equipo1_temporada[partidos_equipo1_temporada['Visitante'] == equipo1]['GolesVisitante'].sum()
+        total_goles = goles_local + goles_visitante
+        
+        # Contar el total de partidos jugados por el equipo 1 (equipo local) en esa temporada
+        partidos = len(partidos_equipo1_temporada)
+
+        # Calcular la media de goles por partido jugado en esa temporada
+        if partidos != 0:
+            media = total_goles / partidos
+        else:
+            media = 0
+        
+        return media
+
+    def aplicar_media_goles_equipo1(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['1_Media_Goles_PP'] = self.df1.apply(self.media_goles_equipo1, axis=1).round(2)
+
+        return self.df1
+
+    def valoracion_jugadores(self):
+        for index, row in self.df1.iterrows():
+            temporada_actual = row['Temporada']
+            equipo_local = row['Local']
+            
+            # Filtrar jugadores por temporada y equipo local
+            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo_local)]
+            
+            # Sumar las valoraciones de los jugadores
+            valor_total_equipo_local = jugadores_temporada_equipo['Valoracion'].sum()
+            
+            # Asignar el valor total al DataFrame de partidos
+            self.df1.at[index, '1_ValorJugadores'] = valor_total_equipo_local
+
+        return self.df1
+    
+    def valoracion_media_jugadores(self):
+        for index, row in self.df1.iterrows():
+            temporada_actual = row['Temporada']
+            equipo_local = row['Local']
+            
+            # Filtrar jugadores por temporada y equipo local
+            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo_local)]
+            
+            # Sumar las valoraciones de los jugadores
+            valor_total_equipo_local = jugadores_temporada_equipo['Valoracion'].mean()
+            
+            # Asignar el valor total al DataFrame de partidos
+            self.df1.at[index, '1_MediaJugadores'] = valor_total_equipo_local
+        
+        return self.df1
+    
+    def calcular_porcentaje_equipo2_ganado_temporada(self, row):
+        # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
+        equipo2 = row['Visitante']
+        temporada = row['Temporada']
+        
+        # Excluir la fila actual del DataFrame
+        df_sin_fila_actual = self.df1.drop(row.name)
+        
+        # Filtrar filas de la temporada donde aparezca el equipo 2, independientemente de si es local o visitante
+        partidos_equipo2 = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo2) | (df_sin_fila_actual['Visitante'] == equipo2)) & (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Contar las filas donde el equipo 2 ha ganado
+        victorias = partidos_equipo2[((partidos_equipo2['Local'] == equipo2) & (partidos_equipo2['VictoriaLocal'] == 1)) |
+                                    ((partidos_equipo2['Visitante'] == equipo2) & (partidos_equipo2['VictoriaVisitante'] == 1))]
+        num_victorias_equipo2 = len(victorias)
+        
+        # Calcular el porcentaje de partidos ganados por el equipo 2 en la temporada
+        total_partidos_temporada = len(partidos_equipo2)
+        if total_partidos_temporada != 0:
+            porcentaje_equipo2_ganado = (num_victorias_equipo2 / total_partidos_temporada) * 100
+        else:
+            porcentaje_equipo2_ganado = 0
+        
+        return porcentaje_equipo2_ganado
+
+
+    def aplicar_porcentaje_equipo2_ganado_temporada(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['%_2_G_Temporada'] = self.df1.apply(self.calcular_porcentaje_equipo2_ganado_temporada, axis=1).round(2)
+
+        return self.df1
+
+
+    def equipo2_ganado_temporada_local(self, row):
+        # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
+        equipo2 = row['Visitante']
+        temporada = row['Temporada']
+
+        # Excluir la fila actual del DataFrame
+        df_sin_fila_actual = self.df1.drop(row.name)
+        
+        # Filtrar filas de la temporada donde aparezca el equipo 1, independientemente de si es local o visitante
+        partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Contar las filas donde el equipo 1 ha ganado
+        victorias_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['VictoriaLocal'] == 1)]
+                                            
+        victorias_equipo2_l = len(victorias_l)
+        
+        # Calcular el porcentaje de partidos ganados por el equipo z en la temporada
+        partidos_temporada_local = len(partidos_equipo2_local)
+        if partidos_temporada_local != 0:
+            porcentaje_ganado_local = (victorias_equipo2_l / partidos_temporada_local) * 100
+        else:
+            porcentaje_ganado_local = 0
+        
+        return porcentaje_ganado_local
+
+
+    def aplicar_equipo2_ganado_temporada_local(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['%_2_G_Temporada_L'] = self.df1.apply(self.equipo2_ganado_temporada_local, axis=1).round(2)
+
+        return self.df1
+
+
+    def equipo2_empatado_temporada_local(self, row):
+        # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
+        equipo2 = row['Visitante']
+        temporada = row['Temporada']
+
+        df_sin_fila_actual = self.df1.drop(row.name)
+        
+        # Filtrar filas de la temporada donde aparezca el equipo 1, independientemente de si es local o visitante
+        partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Contar las filas donde el equipo 1 ha ganado
+        empates_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['Empate'] == 1)]
+                                            
+        empates_equipo2_l = len(empates_l)
+        
+        # Calcular el porcentaje de partidos ganados por el equipo 1 en la temporada
+        partidos_temporada_local = len(partidos_equipo2_local)
+        if partidos_temporada_local != 0:
+            porcentaje_empatado_local = (empates_equipo2_l / partidos_temporada_local) * 100
+        else:
+            porcentaje_empatado_local = 0
+        
+        return porcentaje_empatado_local
+
+
+    def aplicar_equipo2_empatado_temporada_local(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['%_2_E_Temporada_L'] = self.df1.apply(self.equipo2_empatado_temporada_local, axis=1).round(2)
+
+        return self.df1
+
+
+    def equipo2_perdido_temporada_local(self, row):
+        # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
+        equipo2 = row['Visitante']
+        temporada = row['Temporada']
+        
+        df_sin_fila_actual = self.df1.drop(row.name)
+
+        # Filtrar filas de la temporada donde aparezca el equipo 2, independientemente de si es local o visitante
+        partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Contar las filas donde el equipo 2 ha ganado
+        perdidos_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['VictoriaVisitante'] == 1)]
+                                            
+        perdidos_equipo2_l = len(perdidos_l)
+        
+        # Calcular el porcentaje de partidos ganados por el equipo 2 en la temporada
+        partidos_temporada_local = len(partidos_equipo2_local)
+        if partidos_temporada_local != 0:
+            porcentaje_perdido_local = (perdidos_equipo2_l / partidos_temporada_local) * 100
+        else:
+            porcentaje_perdido_local = 0
+        
+        return porcentaje_perdido_local
+
+    def aplicar_equipo2_perdido_temporada_local(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['%_2_P_Temporada_L'] = self.df1.apply(self.equipo2_perdido_temporada_local, axis=1).round(2)
+
+        return self.df1
+    
+    
+    def aplicar_media_ganado2(self):
+        self.df1['2_Media_G'] =(self.df1.apply(self.calcular_porcentaje_equipo2_ganado_temporada, axis=1) / 100).round(2)
+        self.df1['2_Media_G_Local'] = (self.df1.apply(self.equipo2_ganado_temporada_local, axis=1) / 100).round(2)
+
+    
+    def media_goles_equipo2(self, row):
+        # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
+        equipo2 = row['Visitante']
+        temporada = row['Temporada']
+        
+        # Excluir la fila actual del DataFrame
+        df_sin_fila_actual = self.df1.drop(row.name)
+        
+        # Filtrar filas de la temporada donde aparezca el equipo 2 (equipo visitante), independientemente de si es local o visitante
+        partidos_equipo2_temporada = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo2) | (df_sin_fila_actual['Visitante'] == equipo2)) & 
+                                                        (df_sin_fila_actual['Temporada'] == temporada)]
+        
+        # Calcular el total de goles metidos por el equipo 2 (equipo visitante) en esa temporada
+        goles_local = partidos_equipo2_temporada[partidos_equipo2_temporada['Local'] == equipo2]['GolesLocal'].sum()
+        goles_visitante = partidos_equipo2_temporada[partidos_equipo2_temporada['Visitante'] == equipo2]['GolesVisitante'].sum()
+        total_goles = goles_local + goles_visitante
+        
+        # Contar el total de partidos jugados por el equipo 2 (equipo visitante) en esa temporada
+        partidos = len(partidos_equipo2_temporada)
+
+        # Calcular la media de goles por partido jugado en esa temporada
+        if partidos != 0:
+            media = total_goles / partidos
+        else:
+            media = 0
+        
+        return media
+
+    def aplicar_media_goles_equipo2(self):
+        # Aplicar la función a cada fila y crear la nueva columna
+        self.df1['2_Media_Goles_PP'] = self.df1.apply(self.media_goles_equipo2, axis=1).round(2)
+
+        return self.df1
+
+    def valor_jugadores_equipo2(self):
+        #Valor total de los jugadores para el equipo visitante en esa temporada
+        for index, row in self.df1.iterrows():
+            temporada_actual = row['Temporada']
+            equipo2 = row['Visitante']
+            
+            # Filtrar jugadores por temporada y equipo local
+            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
+            
+            # Sumar las valoraciones de los jugadores
+            valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].sum()
+            
+            # Asignar el valor total al DataFrame de partidos
+            self.df1.at[index, '2_ValorJugadores'] = valor_total_equipo2
+
+        return self.df1
+    
+    def valoracion_media_jugadores2(self):
+        #Media del valor de los jugadores del equipo viistante en esa temporada
+        for index, row in self.df1.iterrows():
+            temporada_actual = row['Temporada']
+            equipo2 = row['Visitante']
+            
+            # Filtrar jugadores por temporada y equipo local
+            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
+            
+            # Sumar las valoraciones de los jugadores
+            valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].mean()
+            
+            # Asignar el valor total al DataFrame de partidos
+            self.df1.at[index, '2_MediaJugadores'] = valor_total_equipo2
+
+        return self.df1
+    
+
 
 
 
@@ -715,7 +984,24 @@ df_champions.aplicar_porcentaje_victorias_local()
 df_champions.aplicar_porcentaje_empate()
 df_champions.aplicar_porcentaje_victoria_visitante()
 df_champions.aplicar_porcentaje_equipo1_ganado()
-print(df_champions.head())
+df_champions.aplicar_porcentaje_equipo2_ganado()
+df_champions.aplicar_porcentaje_equipo1_ganado_temporada()
+df_champions.aplicar_equipo1_ganado_temporada_local()
+df_champions.aplicar_equipo1_empatado_temporada_local()
+df_champions.aplicar_equipo1_perdido_temporada_local()
+df_champions.aplicar_media_ganado()
+df_champions.aplicar_media_goles_equipo1()
+df_champions.valoracion_jugadores()
+df_champions.valoracion_media_jugadores()
+df_champions.aplicar_porcentaje_equipo2_ganado_temporada()
+df_champions.aplicar_equipo2_ganado_temporada_local()
+df_champions.aplicar_equipo2_empatado_temporada_local()
+df_champions.aplicar_equipo2_perdido_temporada_local()
+df_champions.aplicar_media_ganado2()
+df_champions.aplicar_media_goles_equipo2()
+df_champions.valor_jugadores_equipo2()
+df_champions.valoracion_media_jugadores2()
+print(df_champions.head(10))
 
 
 
@@ -723,317 +1009,11 @@ print(df_champions.head())
 
 
 
-
-#Media de goles del equipo 1 por partidos jugados en cada temporada
-
-def media_goles_equipo1(row):
-    # Obtener el equipo 1 (equipo local) de la fila actual y la temporada correspondiente
-    equipo1 = row['Local']
-    temporada = row['Temporada']
-    
-    # Excluir la fila actual del DataFrame
-    df_sin_fila_actual = df3.drop(row.name)
-    
-    # Filtrar filas de la temporada donde aparezca el equipo 1 (equipo local), independientemente de si es local o visitante
-    partidos_equipo1_temporada = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo1) | (df_sin_fila_actual['Visitante'] == equipo1)) & 
-                                                     (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Calcular el total de goles metidos por el equipo 1 (equipo local) en esa temporada
-    goles_local = partidos_equipo1_temporada[partidos_equipo1_temporada['Local'] == equipo1]['GolesLocal'].sum()
-    goles_visitante = partidos_equipo1_temporada[partidos_equipo1_temporada['Visitante'] == equipo1]['GolesVisitante'].sum()
-    total_goles = goles_local + goles_visitante
-    
-    # Contar el total de partidos jugados por el equipo 1 (equipo local) en esa temporada
-    partidos = len(partidos_equipo1_temporada)
-
-    # Calcular la media de goles por partido jugado en esa temporada
-    if partidos != 0:
-        media = total_goles / partidos
-    else:
-        media = 0
-    
-    return media
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['1_Media_Goles_PP'] = df3.apply(media_goles_equipo1, axis=1).round(2)
-
-df3.head(10)
-
-
-
-# In[70]:
-
-
-#Transformamos la columna que vamos a usar
-jugadores.tail(10)
-
-
-# In[71]:
-
-
-#Valor total de los jugadores para el equipo local en esa temporada
-
-for index, row in df3.iterrows():
-    temporada_actual = row['Temporada']
-    equipo_local = row['Local']
-    
-    # Filtrar jugadores por temporada y equipo local
-    jugadores_temporada_equipo = jugadores[(jugadores['Temporada'] == temporada_actual) & (jugadores['Equipo'] == equipo_local)]
-    
-    # Sumar las valoraciones de los jugadores
-    valor_total_equipo_local = jugadores_temporada_equipo['Valoracion'].sum()
-    
-    # Asignar el valor total al DataFrame de partidos
-    df3.at[index, '1_ValorJugadores'] = valor_total_equipo_local
-
-df3.head(10)
-
-
-# In[72]:
-
-
-#Media del valor de los jugadores del equipo local en esa temporada
-
-for index, row in df3.iterrows():
-    temporada_actual = row['Temporada']
-    equipo_local = row['Local']
-    
-    # Filtrar jugadores por temporada y equipo local
-    jugadores_temporada_equipo = jugadores[(jugadores['Temporada'] == temporada_actual) & (jugadores['Equipo'] == equipo_local)]
-    
-    # Sumar las valoraciones de los jugadores
-    valor_total_equipo_local = jugadores_temporada_equipo['Valoracion'].mean()
-    
-    # Asignar el valor total al DataFrame de partidos
-    df3.at[index, '1_MediaJugadores'] = valor_total_equipo_local
-
-
-
-# #### Estadísticas quipo 2, equipo visitante
-
-
-
-#Partidos ganados por el equipo2 en esa temporada
-
-def calcular_porcentaje_equipo2_ganado_temporada(row):
-    # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
-    equipo2 = row['Visitante']
-    temporada = row['Temporada']
-    
-    # Excluir la fila actual del DataFrame
-    df_sin_fila_actual = df3.drop(row.name)
-    
-    # Filtrar filas de la temporada donde aparezca el equipo 2, independientemente de si es local o visitante
-    partidos_equipo2 = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo2) | (df_sin_fila_actual['Visitante'] == equipo2)) & (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Contar las filas donde el equipo 2 ha ganado
-    victorias = partidos_equipo2[((partidos_equipo2['Local'] == equipo2) & (partidos_equipo2['VictoriaLocal'] == 1)) |
-                                  ((partidos_equipo2['Visitante'] == equipo2) & (partidos_equipo2['VictoriaVisitante'] == 1))]
-    num_victorias_equipo2 = len(victorias)
-    
-    # Calcular el porcentaje de partidos ganados por el equipo 2 en la temporada
-    total_partidos_temporada = len(partidos_equipo2)
-    if total_partidos_temporada != 0:
-        porcentaje_equipo2_ganado = (num_victorias_equipo2 / total_partidos_temporada) * 100
-    else:
-        porcentaje_equipo2_ganado = 0
-    
-    return porcentaje_equipo2_ganado
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['%_2_G_Temporada'] = df3.apply(calcular_porcentaje_equipo2_ganado_temporada, axis=1).round(2)
-
-
-
-
-
-
-#Partidos ganados por el equipo2 en esa temporada pero solo como local
-
-def equipo2_ganado_temporada_local(row):
-    # Obtener el equipo 1 de la fila actual y la temporada correspondiente
-    equipo2 = row['Visitante']
-    temporada = row['Temporada']
-
-    # Excluir la fila actual del DataFrame
-    df_sin_fila_actual = df3.drop(row.name)
-    
-    # Filtrar filas de la temporada donde aparezca el equipo 1, independientemente de si es local o visitante
-    partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Contar las filas donde el equipo 1 ha ganado
-    victorias_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['VictoriaLocal'] == 1)]
-                                         
-    victorias_equipo2_l = len(victorias_l)
-    
-    # Calcular el porcentaje de partidos ganados por el equipo z en la temporada
-    partidos_temporada_local = len(partidos_equipo2_local)
-    if partidos_temporada_local != 0:
-        porcentaje_ganado_local = (victorias_equipo2_l / partidos_temporada_local) * 100
-    else:
-        porcentaje_ganado_local = 0
-    
-    return porcentaje_ganado_local
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['%_2_G_Temporada_L'] = df3.apply(equipo2_ganado_temporada_local, axis=1).round(2)
-
-df3.head(10)
-
-
-# In[75]:
-
-
-#Partidos empatado por el equipo2 esa temporada pero solo jugando como local
-def equipo2_empatado_temporada_local(row):
-    # Obtener el equipo 1 de la fila actual y la temporada correspondiente
-    equipo2 = row['Visitante']
-    temporada = row['Temporada']
-
-    df_sin_fila_actual = df3.drop(row.name)
-    
-    # Filtrar filas de la temporada donde aparezca el equipo 1, independientemente de si es local o visitante
-    partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Contar las filas donde el equipo 1 ha ganado
-    empates_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['Empate'] == 1)]
-                                         
-    empates_equipo2_l = len(empates_l)
-    
-    # Calcular el porcentaje de partidos ganados por el equipo 1 en la temporada
-    partidos_temporada_local = len(partidos_equipo2_local)
-    if partidos_temporada_local != 0:
-        porcentaje_empatado_local = (empates_equipo2_l / partidos_temporada_local) * 100
-    else:
-        porcentaje_empatado_local = 0
-    
-    return porcentaje_empatado_local
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['%_2_E_Temporada_L'] = df3.apply(equipo2_empatado_temporada_local, axis=1).round(2)
-
-
-# In[76]:
-
-
-#Partidos perido esa temporada pero solo jugando como local
-def equipo2_perdido_temporada_local(row):
-    # Obtener el equipo 2 de la fila actual y la temporada correspondiente
-    equipo2 = row['Visitante']
-    temporada = row['Temporada']
-    
-    df_sin_fila_actual = df3.drop(row.name)
-
-    # Filtrar filas de la temporada donde aparezca el equipo 2, independientemente de si es local o visitante
-    partidos_equipo2_local = df_sin_fila_actual[(df_sin_fila_actual['Local'] == equipo2) & (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Contar las filas donde el equipo 2 ha ganado
-    perdidos_l = partidos_equipo2_local[(partidos_equipo2_local['Local'] == equipo2) & (partidos_equipo2_local['VictoriaVisitante'] == 1)]
-                                         
-    perdidos_equipo2_l = len(perdidos_l)
-    
-    # Calcular el porcentaje de partidos ganados por el equipo 2 en la temporada
-    partidos_temporada_local = len(partidos_equipo2_local)
-    if partidos_temporada_local != 0:
-        porcentaje_perdido_local = (perdidos_equipo2_l / partidos_temporada_local) * 100
-    else:
-        porcentaje_perdido_local = 0
-    
-    return porcentaje_perdido_local
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['%_2_P_Temporada_L'] = df3.apply(equipo2_perdido_temporada_local, axis=1).round(2)
-
-
-
-
-#Media de partidos ganados
-
-df3['2_Media_G'] =( df3.apply(calcular_porcentaje_equipo2_ganado_temporada, axis=1) / 100).round(2)
-df3['2_Media_G_Local'] = (df3.apply(equipo2_ganado_temporada_local, axis=1) / 100).round(2)
-
-
-
-
-#Media de goles del equipo 2 por partidos jugados en cada temporada
-
-def media_goles_equipo2(row):
-    # Obtener el equipo 2 (equipo visitante) de la fila actual y la temporada correspondiente
-    equipo2 = row['Visitante']
-    temporada = row['Temporada']
-    
-    # Excluir la fila actual del DataFrame
-    df_sin_fila_actual = df3.drop(row.name)
-    
-    # Filtrar filas de la temporada donde aparezca el equipo 2 (equipo visitante), independientemente de si es local o visitante
-    partidos_equipo2_temporada = df_sin_fila_actual[((df_sin_fila_actual['Local'] == equipo2) | (df_sin_fila_actual['Visitante'] == equipo2)) & 
-                                                     (df_sin_fila_actual['Temporada'] == temporada)]
-    
-    # Calcular el total de goles metidos por el equipo 2 (equipo visitante) en esa temporada
-    goles_local = partidos_equipo2_temporada[partidos_equipo2_temporada['Local'] == equipo2]['GolesLocal'].sum()
-    goles_visitante = partidos_equipo2_temporada[partidos_equipo2_temporada['Visitante'] == equipo2]['GolesVisitante'].sum()
-    total_goles = goles_local + goles_visitante
-    
-    # Contar el total de partidos jugados por el equipo 2 (equipo visitante) en esa temporada
-    partidos = len(partidos_equipo2_temporada)
-
-    # Calcular la media de goles por partido jugado en esa temporada
-    if partidos != 0:
-        media = total_goles / partidos
-    else:
-        media = 0
-    
-    return media
-
-# Aplicar la función a cada fila y crear la nueva columna
-df3['2_Media_Goles_PP'] = df3.apply(media_goles_equipo2, axis=1).round(2)
-
-
-
-#Valor total de los jugadores para el equipo visitante en esa temporada
-for index, row in df3.iterrows():
-    temporada_actual = row['Temporada']
-    equipo2 = row['Visitante']
-    
-    # Filtrar jugadores por temporada y equipo local
-    jugadores_temporada_equipo = jugadores[(jugadores['Temporada'] == temporada_actual) & (jugadores['Equipo'] == equipo2)]
-    
-    # Sumar las valoraciones de los jugadores
-    valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].sum()
-    
-    # Asignar el valor total al DataFrame de partidos
-    df3.at[index, '2_ValorJugadores'] = valor_total_equipo2
-
-
-
-#Media del valor de los jugadores del equipo viistante en esa temporada
-for index, row in df3.iterrows():
-    temporada_actual = row['Temporada']
-    equipo2 = row['Visitante']
-    
-    # Filtrar jugadores por temporada y equipo local
-    jugadores_temporada_equipo = jugadores[(jugadores['Temporada'] == temporada_actual) & (jugadores['Equipo'] == equipo2)]
-    
-    # Sumar las valoraciones de los jugadores
-    valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].mean()
-    
-    # Asignar el valor total al DataFrame de partidos
-    df3.at[index, '2_MediaJugadores'] = valor_total_equipo2
-'''
-
-
-
-'''
-# #### Comprobar que mis nuevos datas no tengan valores nulos y su formato sea correcto
-
-# In[83]:
-
+#Comprobar que mis nuevos datas no tengan valores nulos y su formato sea correcto
 
 import csv
 import json
 
-
-# In[84]:
 
 
 #De entrenadores
@@ -1073,20 +1053,15 @@ df4['PP'] = pd.to_numeric(df4['PP'])
 df4.info()
 
 
-# In[88]:
-
 
 df4.to_csv('dataframe/df_entrenador_trayectoria.csv', index=False)
 
 
-# In[89]:
 
 
 #Df equipo
 df2.info()
 
-
-# In[90]:
 
 
 df2.to_csv('dataframe/df_equipo.csv', index=False)
@@ -1101,14 +1076,12 @@ with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
 print("Diccionario id equipos guardado")
 
 
-# In[91]:
 
 
 #Dataframe partidos
 df3.info()
 
 
-# In[92]:
 
 
 # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
@@ -1132,7 +1105,6 @@ del df3['Año Final']
 print(df3.info())
 
 
-# In[93]:
 
 
 # Filtrar las filas para la temporada 2023-01-01
@@ -1142,21 +1114,16 @@ champions_23_24 = df3.loc[df3['Temporada'] == '2023-01-01']
 champions = df3.loc[df3['Temporada'] != '2023-01-01']
 
 
-# In[94]:
-
 
 champions.to_csv('dataframe/champions.csv', index=False)
 champions_23_24.to_csv('dataframe/champions_23_24.csv', index=False)
 
-
-# In[95]:
 
 
 #Jugadores
 jugadores.info()
 
 
-# In[96]:
 
 
 # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
@@ -1186,13 +1153,10 @@ jugadores['Posc'].fillna(pais_moda, inplace=True)
 print(jugadores.info())
 
 
-# In[97]:
 
 
 jugadores.to_csv('dataframe/df_jugadores.csv', index=False)
 
-
-# In[98]:
 
 
 # Nombre del archivo donde se guardará el JSON
@@ -1205,8 +1169,5 @@ with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
 print("Diccionario id jugadores guardado")
 
 
-# In[102]:
 
 
-#!jupyter nbconvert --to script preparacion.ipynb
-'''
