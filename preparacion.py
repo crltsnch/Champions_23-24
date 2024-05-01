@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import csv
+import json
 
 
 
@@ -21,10 +22,7 @@ class Entrenador:
         self.df.head(10)
         return self.df
 
-#instanciamos
-entrenador = Entrenador('data/entrenador.csv')
-diccionario_equipos = entrenador.diccionario_entrenadores()
-df_entrenador = entrenador.procesar()
+
 
 
 
@@ -43,13 +41,6 @@ class Equipo:
         self.df = self.df.drop(['Escudo'], axis=1)
         return self.df
     
-df_equipo = Equipo('data/equipo.csv')
-diccionario_equipos = df_equipo.diccionario_equipos()
-data_equipo = df_equipo.procesar()
-
-print(diccionario_equipos)
-print(data_equipo.info())
-
 
 
 
@@ -145,12 +136,7 @@ class Partido:
         return self.df
     
 
-df_partido = Partido('data/partido.csv')
-df_partido.procesar1()
-df_partido.procesar_diccionario_equipos(diccionario_equipos)
-df_partido = df_partido.procesar2()
 
-print(df_partido.info())
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -194,11 +180,16 @@ class TrayectoriaEntrenador:
         
         return self.df
 
+    def procesar2(self):
+        self.df['PJ'] = pd.to_numeric(self.df['PJ'])
+        self.df['PG'] = pd.to_numeric(self.df['PG'])
+        self.df['PE'] = pd.to_numeric(self.df['PE'])
+        self.df['PP'] = pd.to_numeric(self.df['PP'])
+        
+        return self.df
 
-df_trayectoria_entrenador = TrayectoriaEntrenador('data/trayectoria_entrenador.csv')
-df_trayectoria_entrenador.procesar()
-df_trayectoria_entrenador = df_trayectoria_entrenador.id_equipo(diccionario_equipos)
-print(df_trayectoria_entrenador.info())
+
+
 
 
 
@@ -357,15 +348,28 @@ class Jugador:
         self.df.drop(columns=['V'], inplace=True)
 
         return self.df
+    
+    def procesar3(self):
+        # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
+        self.df[['Año Inicial', 'Año Final']] = self.df['Temporada'].str.split('-', expand=True)
 
-df_jugadores = Jugador('data/jugador.csv', 'data/jugador2.csv')
-df_jugadores.un_data()
-df_jugadores.procesar()
-df_jugadores.id_jugador()
-df_jugadores.id_equipo(diccionario_equipos)
-df_jugadores.procesar2()
-df_jugadores = df_jugadores.valoracion()
-print(df_jugadores.info())
+        # Convertir las columnas de año inicial y año final a tipo entero
+        self.df['Año Inicial'] = self.df['Año Inicial'].astype(int)
+        self.df['Año Final'] = self.df['Año Final'].astype(int)
+
+        # Calcular el año medio entre el año inicial y el año final
+        self.df['Temporada'] = self.df[['Año Inicial', 'Año Final']].mean(axis=1)
+
+        # Convertir la temporada a tipo datetime
+        self.df['Temporada'] = pd.to_datetime(self.df['Temporada'], format='%Y')
+
+        # Eliminar las columnas de año inicial y año final si es necesario
+        del self.df['Año Inicial']
+        del self.df['Año Final']
+
+        return self.df
+    
+
 
 
 
@@ -974,200 +978,122 @@ class Champions:
 
         return self.df1
     
-
-
-
-
-df_champions = Champions(df_partido, df_jugadores)
-df_champions.goles()
-df_champions.aplicar_porcentaje_victorias_local()
-df_champions.aplicar_porcentaje_empate()
-df_champions.aplicar_porcentaje_victoria_visitante()
-df_champions.aplicar_porcentaje_equipo1_ganado()
-df_champions.aplicar_porcentaje_equipo2_ganado()
-df_champions.aplicar_porcentaje_equipo1_ganado_temporada()
-df_champions.aplicar_equipo1_ganado_temporada_local()
-df_champions.aplicar_equipo1_empatado_temporada_local()
-df_champions.aplicar_equipo1_perdido_temporada_local()
-df_champions.aplicar_media_ganado()
-df_champions.aplicar_media_goles_equipo1()
-df_champions.valoracion_jugadores()
-df_champions.valoracion_media_jugadores()
-df_champions.aplicar_porcentaje_equipo2_ganado_temporada()
-df_champions.aplicar_equipo2_ganado_temporada_local()
-df_champions.aplicar_equipo2_empatado_temporada_local()
-df_champions.aplicar_equipo2_perdido_temporada_local()
-df_champions.aplicar_media_ganado2()
-df_champions.aplicar_media_goles_equipo2()
-df_champions.valor_jugadores_equipo2()
-df_champions.valoracion_media_jugadores2()
-print(df_champions.head(10))
-
-
-
-
-
-
-
-#Comprobar que mis nuevos datas no tengan valores nulos y su formato sea correcto
-
-import csv
-import json
-
-
-
-#De entrenadores
-df1.info()
-
-
-# In[85]:
-
-
-# Guardar el DataFrame en un archivo CSV
-df1.to_csv('dataframe/df_entrenador.csv', index=False)
-
-# Nombre del archivo donde se guardará el JSON
-nombre_archivo = 'dataframe/id_entrenador.json'
-
-# Guardar el diccionario en el archivo JSON
-with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
-    json.dump(diccionario_entrenadores, archivo, ensure_ascii=False)
-
-print("Diccionario id entrenadores guardado")
-
-
-# In[86]:
-
-
-#Entrenador trayectoria
-df4.info()
-
-
-# In[87]:
-
-
-df4['PJ'] = pd.to_numeric(df4['PJ'])
-df4['PG'] = pd.to_numeric(df4['PG'])
-df4['PE'] = pd.to_numeric(df4['PE'])
-df4['PP'] = pd.to_numeric(df4['PP'])
-df4.info()
-
-
-
-df4.to_csv('dataframe/df_entrenador_trayectoria.csv', index=False)
-
-
-
-
-#Df equipo
-df2.info()
-
-
-
-df2.to_csv('dataframe/df_equipo.csv', index=False)
-
-# Nombre del archivo donde se guardará el JSON
-nombre_archivo = 'dataframe/id_equipo.json'
-
-# Guardar el diccionario en el archivo JSON
-with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
-    json.dump(dic_equipos_original, archivo, ensure_ascii=False)
-
-print("Diccionario id equipos guardado")
-
-
-
-
-#Dataframe partidos
-df3.info()
-
-
-
-
-# Dividir la columna Temporada en dos columnas separadas de año inicial y año final
-df3[['Año Inicial', 'Año Final']] = df3['Temporada'].str.split('-', expand=True)
-
-# Convertir las columnas de año inicial y año final a tipo entero
-df3['Año Inicial'] = df3['Año Inicial'].astype(int)
-df3['Año Final'] = df3['Año Final'].astype(int)
-
-# Calcular el año medio entre el año inicial y el año final
-df3['Temporada'] = df3[['Año Inicial', 'Año Final']].mean(axis=1)
-
-# Convertir la temporada a tipo datetime
-df3['Temporada'] = pd.to_datetime(df3['Temporada'], format='%Y')
-
-# Eliminar las columnas de año inicial y año final si es necesario
-del df3['Año Inicial']
-del df3['Año Final']
-
-# Verificar el cambio
-print(df3.info())
-
-
-
-
-# Filtrar las filas para la temporada 2023-01-01
-champions_23_24 = df3.loc[df3['Temporada'] == '2023-01-01']
-
-# Filtrar las filas para el resto de temporadas
-champions = df3.loc[df3['Temporada'] != '2023-01-01']
-
-
-
-champions.to_csv('dataframe/champions.csv', index=False)
-champions_23_24.to_csv('dataframe/champions_23_24.csv', index=False)
-
-
-
-#Jugadores
-jugadores.info()
-
-
-
-
-# Dividir la columna Temporada en dos columnas separadas de año inicial y año final
-jugadores[['Año Inicial', 'Año Final']] = jugadores['Temporada'].str.split('-', expand=True)
-
-# Convertir las columnas de año inicial y año final a tipo entero
-jugadores['Año Inicial'] = jugadores['Año Inicial'].astype(int)
-jugadores['Año Final'] = jugadores['Año Final'].astype(int)
-
-# Calcular el año medio entre el año inicial y el año final
-jugadores['Temporada'] = jugadores[['Año Inicial', 'Año Final']].mean(axis=1)
-
-# Convertir la temporada a tipo datetime
-jugadores['Temporada'] = pd.to_datetime(jugadores['Temporada'], format='%Y')
-
-# Eliminar las columnas de año inicial y año final si es necesario
-del jugadores['Año Inicial']
-del jugadores['Año Final']
-
-pais_moda = jugadores['País'].mode()[0]
-jugadores['País'].fillna(pais_moda, inplace=True)
-
-pais_moda = jugadores['Posc'].mode()[0]
-jugadores['Posc'].fillna(pais_moda, inplace=True)
-
-# Verificar el cambio
-print(jugadores.info())
-
-
-
-
-jugadores.to_csv('dataframe/df_jugadores.csv', index=False)
-
-
-
-# Nombre del archivo donde se guardará el JSON
-nombre_archivo = 'dataframe/id_jugador.json'
-
-# Guardar el diccionario en el archivo JSON
-with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
-    json.dump(ids_jugadores, archivo, ensure_ascii=False)
-
-print("Diccionario id jugadores guardado")
-
-
-
-
+    def procesar(self):
+        # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
+        self.df1[['Año Inicial', 'Año Final']] = self.df1['Temporada'].str.split('-', expand=True)
+
+        # Convertir las columnas de año inicial y año final a tipo entero
+        self.df1['Año Inicial'] = self.df1['Año Inicial'].astype(int)
+        self.df1['Año Final'] = self.df1['Año Final'].astype(int)
+
+        # Calcular el año medio entre el año inicial y el año final
+        self.df1['Temporada'] = self.df1[['Año Inicial', 'Año Final']].mean(axis=1)
+
+        # Convertir la temporada a tipo datetime
+        self.df1['Temporada'] = pd.to_datetime(self.df1['Temporada'], format='%Y')
+
+        # Eliminar las columnas de año inicial y año final si es necesario
+        del self.df1['Año Inicial']
+        del self.df1['Año Final']
+
+        # Filtrar las filas para la temporada 2023-01-01
+        champions_23_24 = self.df1.loc[self.df1['Temporada'] == '2023-01-01']
+
+        # Filtrar las filas para el resto de temporadas
+        champions = self.df1.loc[self.df1['Temporada'] != '2023-01-01']
+
+        return champions, champions_23_24
+
+
+
+
+def guardar_diccionario(diccionario, nombre_archivo):
+    # Guardar el diccionario en el archivo JSON
+    with open(nombre_archivo, 'w', encoding="utf-8") as archivo:
+        json.dump(diccionario, archivo, ensure_ascii=False)
+
+
+def guardar_data(ruta_archiuvo, nombre):
+    nombre.to_csv(ruta_archiuvo, index=False)
+
+
+
+def main():
+    # Crear instancia de Entrenador
+    entrenador = Entrenador('data/entrenador.csv')
+    diccionario_entrenadores = entrenador.diccionario_entrenadores()  #guardar
+    df_entrenador = entrenador.procesar()  #guardar
+
+    # Crear instancia de Equipo
+    df_equipo = Equipo('data/equipo.csv')
+    diccionario_equipos = df_equipo.diccionario_equipos()  #guardar 
+    df_equipo = df_equipo.procesar()  #guardar
+
+    # Crear instancia de Partido
+    df_partido = Partido('data/partido.csv')
+    df_partido.procesar1()
+    df_partido.procesar_diccionario_equipos(diccionario_equipos)
+    df_partido = df_partido.procesar2()
+
+    # Crear instancia de TrayectoriaEntrenador
+    df_trayectoria_entrenador = TrayectoriaEntrenador('data/trayectoria_entrenador.csv')
+    df_trayectoria_entrenador.procesar()
+    df_trayectoria_entrenador.id_equipo(diccionario_equipos)
+    df_trayectoria_entrenador = df_trayectoria_entrenador.procesar2()   #guardar
+
+    # Crear instancia de Jugador
+    df_jugadores = Jugador('data/jugador.csv', 'data/jugador2.csv')
+    df_jugadores.un_data()
+    df_jugadores.procesar()
+    df_jugadores.id_jugador()
+    # Obtener el diccionario de IDs de los jugadores
+    diccionario_ids_jugadores = df_jugadores.asignar_ids('Jugador')  #guardar
+
+    # Ahora, puedes usar diccionario_ids_jugadores como desees en tu programa
+    print(diccionario_ids_jugadores)
+    df_jugadores.id_equipo(diccionario_equipos)
+    df_jugadores.procesar2()
+    df_jugadores.procesar3()
+    df_jugadores = df_jugadores.valoracion()  #guardar
+
+    # Crear instancia de Champions
+    df_champions = Champions(df_partido, df_jugadores)
+    df_champions.goles()
+    df_champions.aplicar_porcentaje_victorias_local()
+    df_champions.aplicar_porcentaje_empate()
+    df_champions.aplicar_porcentaje_victoria_visitante()
+    df_champions.aplicar_porcentaje_equipo1_ganado()
+    df_champions.aplicar_porcentaje_equipo2_ganado()
+    df_champions.aplicar_porcentaje_equipo1_ganado_temporada()
+    df_champions.aplicar_equipo1_ganado_temporada_local()
+    df_champions.aplicar_equipo1_empatado_temporada_local()
+    df_champions.aplicar_equipo1_perdido_temporada_local()
+    df_champions.aplicar_media_ganado()
+    df_champions.aplicar_media_goles_equipo1()
+    df_champions.valoracion_jugadores()
+    df_champions.valoracion_media_jugadores()
+    df_champions.aplicar_porcentaje_equipo2_ganado_temporada()
+    df_champions.aplicar_equipo2_ganado_temporada_local()
+    df_champions.aplicar_equipo2_empatado_temporada_local()
+    df_champions.aplicar_equipo2_perdido_temporada_local()
+    df_champions.aplicar_media_ganado2()
+    df_champions.aplicar_media_goles_equipo2()
+    df_champions.valor_jugadores_equipo2()
+    df_champions.valoracion_media_jugadores2()
+    champions, champions_23_24 = df_champions.procesar()   #guardar los dos
+    print(champions.head(10))
+
+    guardar_diccionario(diccionario_entrenadores, 'cosas/id_entrenador.json')
+    guardar_diccionario(diccionario_equipos, 'cosas/id_equipo.json')
+    guardar_diccionario(diccionario_ids_jugadores, 'cosas/id_jugador.json')
+
+    guardar_data('cosas/df_entrenador.csv', df_entrenador)
+    guardar_data('cosas/df_equipo.csv', df_equipo)
+    guardar_data('cosas/champions.csv', champions)
+    guardar_data('cosas/champions_23_24.csv', champions_23_24)
+    guardar_data('cosas/df_jugadores.csv', df_jugadores)
+    guardar_data('cosas/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
+
+
+if __name__ == '__main__':
+    main()
