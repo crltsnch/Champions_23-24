@@ -19,7 +19,6 @@ class Entrenador:
     
     def procesar(self):
         self.df.drop(['Pais'], axis=1, inplace=True)
-        self.df.head(10)
         return self.df
 
 
@@ -105,9 +104,7 @@ class Partido:
 
         return self.df
 
-    def procesar2(self):                
-        #Eliminar filas que se guardaron como nulas
-        print("Cantidad de filas con valores NaN:", self.df['Ronda'].isnull().sum())
+    def procesar2(self):
         self.df = self.df.dropna(subset=['Ronda'])
         self.df = self.df.reset_index(drop=True)
 
@@ -116,9 +113,6 @@ class Partido:
 
         # Reorganizar las columnas para que 'idPartido' sea la primera
         self.df = self.df[['idPartido'] + [col for col in self.df.columns if col != 'idPartido']]
-
-        num_filas_nan = self.df['Resultado'].isna().sum()
-        print("Número de filas con valores NaN en la columna 'Resultado':", num_filas_nan)
 
         #Los valores nulos de los futuros partidos que se van a jugar voy a reemplazarlos por '0-0'
         self.df['Resultado'] = self.df['Resultado'].fillna('0–0')
@@ -132,6 +126,23 @@ class Partido:
         self.df['VictoriaLocal'] = (self.df['GolesLocal'] > self.df['GolesVisitante']).astype(int)
         self.df['Empate'] = (self.df['GolesLocal'] == self.df['GolesVisitante']).astype(int)
         self.df['VictoriaVisitante'] = (self.df['GolesLocal'] < self.df['GolesVisitante']).astype(int)
+        
+        # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
+        self.df[['Año Inicial', 'Año Final']] = self.df['Temporada'].str.split('-', expand=True)
+
+        # Convertir las columnas de año inicial y año final a tipo entero
+        self.df['Año Inicial'] = self.df['Año Inicial'].astype(int)
+        self.df['Año Final'] = self.df['Año Final'].astype(int)
+
+        # Calcular el año medio entre el año inicial y el año final
+        self.df['Temporada'] = self.df[['Año Inicial', 'Año Final']].mean(axis=1)
+
+        # Convertir la temporada a tipo datetime
+        self.df['Temporada'] = pd.to_datetime(self.df['Temporada'], format='%Y')
+
+        # Eliminar las columnas de año inicial y año final si es necesario
+        del self.df['Año Inicial']
+        del self.df['Año Final']
 
         return self.df
     
@@ -403,7 +414,6 @@ class Champions:
         for patron, reemplazo in patrones_reemplazo.items():
             self.df1['GolesVisitante'] = self.df1['GolesVisitante'].replace(to_replace=patron, value=reemplazo, regex=True)
 
-
         # Convertir columnas de goles a tipo int
         self.df1['GolesLocal'] = self.df1['GolesLocal'].astype(int)
         self.df1['GolesVisitante'] = self.df1['GolesVisitante'].astype(int)
@@ -414,9 +424,6 @@ class Champions:
         # Convertir columnas de local y visitante a tipo int
         self.df1['Local'] = self.df1['Local'].astype(int)
         self.df1['Visitante'] = self.df1['Visitante'].astype(int)
-
-        # Convertir columna de temporada a tipo string
-        self.df1['Temporada'] = self.df1['Temporada'].astype(str)
 
         # Convertir columna de ronda a tipo string
         self.df1['Ronda'] = self.df1['Ronda'].astype(str)
@@ -751,7 +758,7 @@ class Champions:
             
             # Filtrar jugadores por temporada y equipo local
             jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo_local)]
-            
+        
             # Sumar las valoraciones de los jugadores
             valor_total_equipo_local = jugadores_temporada_equipo['Valoracion'].sum()
             
@@ -951,13 +958,14 @@ class Champions:
             equipo2 = row['Visitante']
             
             # Filtrar jugadores por temporada y equipo local
-            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
-            
+            jugadores_temporada_equipo2 = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
+
             # Sumar las valoraciones de los jugadores
-            valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].sum()
+            valor_total_equipo2 = jugadores_temporada_equipo2['Valoracion'].sum()
             
             # Asignar el valor total al DataFrame de partidos
             self.df1.at[index, '2_ValorJugadores'] = valor_total_equipo2
+
 
         return self.df1
     
@@ -968,34 +976,19 @@ class Champions:
             equipo2 = row['Visitante']
             
             # Filtrar jugadores por temporada y equipo local
-            jugadores_temporada_equipo = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
+            jugadores_temporada_equipo2 = self.df2[(self.df2['Temporada'] == temporada_actual) & (self.df2['Equipo'] == equipo2)]
             
             # Sumar las valoraciones de los jugadores
-            valor_total_equipo2 = jugadores_temporada_equipo['Valoracion'].mean()
+            valor_total_equipo2 = jugadores_temporada_equipo2['Valoracion'].mean()
             
             # Asignar el valor total al DataFrame de partidos
             self.df1.at[index, '2_MediaJugadores'] = valor_total_equipo2
 
+
+
         return self.df1
     
     def procesar(self):
-        # Dividir la columna Temporada en dos columnas separadas de año inicial y año final
-        self.df1[['Año Inicial', 'Año Final']] = self.df1['Temporada'].str.split('-', expand=True)
-
-        # Convertir las columnas de año inicial y año final a tipo entero
-        self.df1['Año Inicial'] = self.df1['Año Inicial'].astype(int)
-        self.df1['Año Final'] = self.df1['Año Final'].astype(int)
-
-        # Calcular el año medio entre el año inicial y el año final
-        self.df1['Temporada'] = self.df1[['Año Inicial', 'Año Final']].mean(axis=1)
-
-        # Convertir la temporada a tipo datetime
-        self.df1['Temporada'] = pd.to_datetime(self.df1['Temporada'], format='%Y')
-
-        # Eliminar las columnas de año inicial y año final si es necesario
-        del self.df1['Año Inicial']
-        del self.df1['Año Final']
-
         # Filtrar las filas para la temporada 2023-01-01
         champions_23_24 = self.df1.loc[self.df1['Temporada'] == '2023-01-01']
 
@@ -1015,85 +1008,3 @@ def guardar_diccionario(diccionario, nombre_archivo):
 
 def guardar_data(ruta_archiuvo, nombre):
     nombre.to_csv(ruta_archiuvo, index=False)
-
-
-
-def main():
-    # Crear instancia de Entrenador
-    entrenador = Entrenador('data/entrenador.csv')
-    diccionario_entrenadores = entrenador.diccionario_entrenadores()  #guardar
-    df_entrenador = entrenador.procesar()  #guardar
-
-    # Crear instancia de Equipo
-    df_equipo = Equipo('data/equipo.csv')
-    diccionario_equipos = df_equipo.diccionario_equipos()  #guardar 
-    df_equipo = df_equipo.procesar()  #guardar
-
-    # Crear instancia de Partido
-    df_partido = Partido('data/partido.csv')
-    df_partido.procesar1()
-    df_partido.procesar_diccionario_equipos(diccionario_equipos)
-    df_partido = df_partido.procesar2()
-
-    # Crear instancia de TrayectoriaEntrenador
-    df_trayectoria_entrenador = TrayectoriaEntrenador('data/trayectoria_entrenador.csv')
-    df_trayectoria_entrenador.procesar()
-    df_trayectoria_entrenador.id_equipo(diccionario_equipos)
-    df_trayectoria_entrenador = df_trayectoria_entrenador.procesar2()   #guardar
-
-    # Crear instancia de Jugador
-    df_jugadores = Jugador('data/jugador.csv', 'data/jugador2.csv')
-    df_jugadores.un_data()
-    df_jugadores.procesar()
-    df_jugadores.id_jugador()
-    # Obtener el diccionario de IDs de los jugadores
-    diccionario_ids_jugadores = df_jugadores.asignar_ids('Jugador')  #guardar
-
-    # Ahora, puedes usar diccionario_ids_jugadores como desees en tu programa
-    print(diccionario_ids_jugadores)
-    df_jugadores.id_equipo(diccionario_equipos)
-    df_jugadores.procesar2()
-    df_jugadores.procesar3()
-    df_jugadores = df_jugadores.valoracion()  #guardar
-
-    # Crear instancia de Champions
-    df_champions = Champions(df_partido, df_jugadores)
-    df_champions.goles()
-    df_champions.aplicar_porcentaje_victorias_local()
-    df_champions.aplicar_porcentaje_empate()
-    df_champions.aplicar_porcentaje_victoria_visitante()
-    df_champions.aplicar_porcentaje_equipo1_ganado()
-    df_champions.aplicar_porcentaje_equipo2_ganado()
-    df_champions.aplicar_porcentaje_equipo1_ganado_temporada()
-    df_champions.aplicar_equipo1_ganado_temporada_local()
-    df_champions.aplicar_equipo1_empatado_temporada_local()
-    df_champions.aplicar_equipo1_perdido_temporada_local()
-    df_champions.aplicar_media_ganado()
-    df_champions.aplicar_media_goles_equipo1()
-    df_champions.valoracion_jugadores()
-    df_champions.valoracion_media_jugadores()
-    df_champions.aplicar_porcentaje_equipo2_ganado_temporada()
-    df_champions.aplicar_equipo2_ganado_temporada_local()
-    df_champions.aplicar_equipo2_empatado_temporada_local()
-    df_champions.aplicar_equipo2_perdido_temporada_local()
-    df_champions.aplicar_media_ganado2()
-    df_champions.aplicar_media_goles_equipo2()
-    df_champions.valor_jugadores_equipo2()
-    df_champions.valoracion_media_jugadores2()
-    champions, champions_23_24 = df_champions.procesar()   #guardar los dos
-    print(champions.head(10))
-
-    guardar_diccionario(diccionario_entrenadores, 'cosas/id_entrenador.json')
-    guardar_diccionario(diccionario_equipos, 'cosas/id_equipo.json')
-    guardar_diccionario(diccionario_ids_jugadores, 'cosas/id_jugador.json')
-
-    guardar_data('cosas/df_entrenador.csv', df_entrenador)
-    guardar_data('cosas/df_equipo.csv', df_equipo)
-    guardar_data('cosas/champions.csv', champions)
-    guardar_data('cosas/champions_23_24.csv', champions_23_24)
-    guardar_data('cosas/df_jugadores.csv', df_jugadores)
-    guardar_data('cosas/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
-
-
-if __name__ == '__main__':
-    main()
