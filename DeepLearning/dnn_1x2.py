@@ -113,7 +113,8 @@ class ModelEvaluation:
         plt.yticks(tick_marks, class_labels)
         plt.xlabel("Predicted Class")
         plt.ylabel("True Class")
-        plt.title("Confusion Matrix")
+        plt.title("Confusion Matrix for 1x2 Model")
+        plt.show()
 
     @staticmethod
     def plot_learning_curve_tf(history):
@@ -129,7 +130,7 @@ class ModelEvaluation:
         plt.subplot(1, 2, 1)
         plt.plot(epochs, train_loss, 'r', label='Training loss')
         plt.plot(epochs, val_loss, 'b', label='Validation loss')
-        plt.title('Training and validation loss')
+        plt.title('Training and validation loss (1x2 Model)')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
@@ -137,12 +138,13 @@ class ModelEvaluation:
         plt.subplot(1, 2, 2)
         plt.plot(epochs, train_accuracy, 'r', label='Training accuracy')
         plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
-        plt.title('Training and validation accuracy')
+        plt.title('Training and validation accuracy (1x2 Model)')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
         plt.savefig('../resultados/learning_curve_dnn1X2.png')
+        plt.show()
 
 
 
@@ -167,7 +169,6 @@ def data_usuario(ruta_df, ruta_data):
     df = pd.get_dummies(df, columns=['Ronda'], drop_first=True)
 
     return df
-
 
 
 
