@@ -3,14 +3,16 @@ import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Reshape, Conv1D, MaxPooling1D, Flatten, Dense, Dropout
-from tensorflow.keras.optimizers import Adam
-from sklearn.metrics import confusion_matrix
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Reshape, Conv1D, MaxPooling1D, Flatten, Dense, Dropout
+from tensorflow.keras.optimizers import Adam, SGD, RMSprop
+from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 
 
-class LoadData:
+
+# Clase para cargar y preparar los datos
+class LoadDataGoles:
     def __init__(self, file_path):
         self.file_path = file_path
 
@@ -21,13 +23,13 @@ class LoadData:
     def prepare_data(self, data):
         # Convertir la columna "Ronda" en variables dummy
         data = pd.get_dummies(data, columns=['Ronda'], drop_first=True)
-
+        
         # Eliminar columnas irrelevantes
-        data = data.drop(['idPartido', 'Temporada', 'Evento', 'GolesLocal', 'GolesVisitante'], axis=1)
+        data = data.drop(['idPartido', 'Temporada', 'Evento'], axis=1)
 
         # Separar características y etiquetas
-        X = data.drop(['VictoriaLocal', 'Empate', 'VictoriaVisitante'], axis=1)
-        y = data[['VictoriaLocal', 'Empate', 'VictoriaVisitante']]
+        X = data.drop(['VictoriaLocal', 'Empate', 'VictoriaVisitante', 'GolesLocal', 'GolesVisitante'], axis=1)
+        y = data[['GolesLocal', 'GolesVisitante']]  # Seleccionar goles locales y visitantes como etiquetas
 
         # Escalar características
         scaler = StandardScaler()
@@ -46,36 +48,45 @@ class LoadData:
 
 
 
-'''Ajuste de hiperparámetros'''
 
-class Model:
+# Clase para entrenar y evaluar el modelo de predicción de goles locales y visitantes
+class GoalsPredictionModel:
     def __init__(self, configurations):
         self.configurations = configurations
         self.best_model = None
         self.best_config = None
-        self.best_accuracy = 0
+        self.best_mae = float('inf')
 
     def train_model(self, X_train, y_train, X_test, y_test):
         for config in self.configurations:
-            model = Sequential([
-            Reshape((X_train.shape[1],), input_shape=(X_train.shape[1],)),
-            Dense(config['units'], activation='relu'),
-            Dropout(config['dropout']),
-            Dense(3, activation='softmax')
-            ])
+            input_layer = Input(shape=(X_train.shape[1],))
+            dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
+            dropout_layer1 = Dropout(config['dropout'])(dense_layer1)
+            dense_layer2 = Dense(config['units'], activation='relu')(dropout_layer1)
+            dropout_layer2 = Dropout(config['dropout'])(dense_layer2)
+
+            # Salida para la predicción de goles locales
+            local_goals_output = Dense(1, name='local_goals_output')(dropout_layer2)
+            # Salida para la predicción de goles visitantes
+            visitor_goals_output = Dense(1, name='visitor_goals_output')(dropout_layer2)
+            
+            model = Model(inputs=input_layer, outputs=[local_goals_output, visitor_goals_output])
 
             optimizer = Adam(learning_rate=config['learning_rate'])
-            model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-
-            history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
+            model.compile(optimizer=optimizer, loss='mse', metrics=['mae', 'mae'])
+            
+            history = model.fit(X_train, [y_train[:, 0], y_train[:, 1]], epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
             
             self.history = history
-            _, accuracy = model.evaluate(X_test, y_test)
+            _, local_mae, visitor_mae = model.evaluate(X_test, [y_test[:, 0], y_test[:, 1]])
+            total_mae = (local_mae + visitor_mae) / 2
             
-            if accuracy > self.best_accuracy:
-                self.best_accuracy = accuracy
+            if total_mae < self.best_mae:
+                self.best_mae = total_mae
                 self.best_model = model
                 self.best_config = config
+            
+        return history
     
     def get_best_model(self):
         return self.best_model
@@ -83,6 +94,7 @@ class Model:
     def get_best_config(self):
         return self.best_config
 
+    
 
 
 
@@ -90,72 +102,40 @@ class ModelEvaluation:
     def __init__(self, model):
         self.model = model
     
-    def evaluate_model(self, X_test, y_test, class_labels, model):
+    def evaluate_model(self, X_test, y_test):
         # Evaluar el modelo
-        loss, accuracy = model.evaluate(X_test, y_test)
+        local_goals_pred, visitor_goals_pred = self.model.predict(X_test)
 
-        # Generar predicciones
-        class_probabilities = model.predict(X_test)
-        predictions = np.argmax(class_probabilities, axis=1)
-        true_labels = np.argmax(y_test, axis=1)
-
-        # Calcular y mostrar la matriz de confusión
-        conf_matrix = confusion_matrix(true_labels, predictions)
-
-        self.plot_matriz_confusion(conf_matrix, class_labels)
-
-    def plot_matriz_confusion(self, conf_matrix, class_labels):
-        # Visualizar la matriz de confusión
-        plt.imshow(conf_matrix, interpolation="nearest", cmap=plt.cm.Blues)
-        plt.colorbar()
-        tick_marks = np.arange(len(class_labels))
-        plt.xticks(tick_marks, class_labels, rotation=45)
-        plt.yticks(tick_marks, class_labels)
-        plt.xlabel("Predicted Class")
-        plt.ylabel("True Class")
-        plt.title("Confusion Matrix for 1x2 Model")
-        plt.show()
-
-    @staticmethod
-    def plot_learning_curve_tf(history):
-        train_loss = history.history['loss']
-        val_loss = history.history['val_loss']
-        train_accuracy = history.history['accuracy']
-        val_accuracy = history.history['val_accuracy']
+        # Calcular y mostrar el MAE para cada tipo de predicción
+        local_mae = mean_absolute_error(y_test[:, 0], local_goals_pred)
+        visitor_mae = mean_absolute_error(y_test[:, 1], visitor_goals_pred)
         
-        epochs = range(1, len(train_loss) + 1)
-        
-        plt.figure(figsize=(20, 6))
-        
-        plt.subplot(1, 2, 1)
-        plt.plot(epochs, train_loss, 'r', label='Training loss')
-        plt.plot(epochs, val_loss, 'b', label='Validation loss')
-        plt.title('Training and validation loss (1x2 Model)')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.legend()
-        
-        plt.subplot(1, 2, 2)
-        plt.plot(epochs, train_accuracy, 'r', label='Training accuracy')
-        plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
-        plt.title('Training and validation accuracy (1x2 Model)')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
+        print("MAE para la predicción de goles del local:", local_mae)
+        print("MAE para la predicción de goles del visitante:", visitor_mae)
+
+        # Graficar los resultados
+        labels = ['Goles Local', 'Goles Visitante']
+        mae_values = [local_mae, visitor_mae]
+
+        plt.bar(labels, mae_values, width=0.5,  color=['royalblue', 'darkorange'])
+        plt.ylabel('MAE')
+        plt.title('MAE Predicción de Goles para local y visitante')
         plt.tight_layout()
-        plt.savefig('../resultados/learning_curve_dnn1X2.png')
+        plt.savefig('../resultados/mae_redes_goles.png')
         plt.show()
+    
 
 
 
+# Guardar el modelo
+def guardar_modelo(modelo, ruta_archivo):
+    tf.keras.models.save_model(modelo, ruta_archivo)
 
-def guardar_modelo(modelo, ruta):
-    tf.keras.models.save_model(modelo, ruta)
 
 
-def cargar_modelo(ruta):
-    return tf.keras.models.load_model(ruta)
-
+def cargar_modelo(ruta_archivo):
+    return tf.keras.models.load_model(ruta_archivo)
+model = tf.keras.models.load_model('../modelos/modelo_dnn_goals.keras')
 
 
 def data_usuario(ruta_df, ruta_data):
@@ -236,31 +216,31 @@ def datos_usuario(df, equipo_local, equipo_visitante):
     return nuevo_dataframe
 
 
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
-# Definir diferentes configuraciones de red y hiperparámetros
-configurations = [
-    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
+
+def main():
+    tf.random.set_seed(42)
+    # Cargar los datos
+    data_loader = LoadDataGoles('../dataframe/champions.csv')
+    data_goles = data_loader.load_data()
+    X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
+
+    configurations = [
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 20, 'dropout': 0.2}
     ]
 
-model_trainer = Model(configurations)
-model_trainer.train_model(X_train, y_train, X_test, y_test)
+    goals_model_trainer = GoalsPredictionModel(configurations)
+    goals_model_trainer.train_model(X_train, y_train, X_test, y_test)
 
-model = model_trainer.get_best_model()
-best_config = model_trainer.get_best_config()
-print("Mejor configuración:", best_config)
+    goals_model = goals_model_trainer.get_best_model()
+    best_config = goals_model_trainer.get_best_config()
 
-model_evaluator = ModelEvaluation(model)
-model_evaluator.evaluate_model(X_test, y_test, y.columns, model)
-ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
+    model_evaluator = ModelEvaluation(goals_model)
+    model_evaluator.evaluate_model(X_test, y_test)
 
-guardar_modelo(model, '/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/modelos/dnn_1x2.keras')
-model = cargar_modelo('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/modelos/dnn_1x2.keras')
+    guardar_modelo(goals_model, '../modelos/modelo_dnn_goals.keras')
+    model2 = cargar_modelo('../modelos/modelo_dnn_goals.keras')
 
-
-'''def main():
     df = data_usuario('../dataframe/champions_23_24.csv', '../dataframe/champions.csv')
 
     # 1. Pedir al usuario que ingrese el equipo local
@@ -274,13 +254,13 @@ model = cargar_modelo('/Users/carlotasanchezgonzalez/Documents/class/Champions_2
     nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
 
     X_prediccion = scaler.transform(nuevo_dataframe)
-    class_probabilities_prediccion = model.predict(X_prediccion)
+    class_probabilities_prediccion = model2.predict(X_prediccion)
 
     print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
-    for i, prob in enumerate(class_probabilities_prediccion[0]):
-        print(f"{y.columns[i]}: {prob*100:.3f}%")
+    print("Goles locales:", class_probabilities_prediccion[0])
+    print("Goles visitantes:", class_probabilities_prediccion[1])
 
 
+if __name__ == "__main__":
+    main()
 
-if __name__ == '__main__':
-    main()'''
