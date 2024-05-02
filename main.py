@@ -5,7 +5,8 @@ from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
-from DeepLearning import *
+from DeepLearning.dnn_1x2 import *
+
 
 def main():
     var = input("(A) Mete A para hacer la extracción de datos\n"
