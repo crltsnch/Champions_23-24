@@ -143,7 +143,7 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('../resultados/learning_curve_dnn1X2.png')
+        plt.savefig('./resultados/learning_curve_dnn1X2.png')
         plt.show()
 
 
