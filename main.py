@@ -5,7 +5,7 @@ from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
-from DeepLearning.dnn_1x2 import *
+from DeepLearning.dnn_1x2 import model, data_usuario, datos_usuario, scaler, y
 
 
 def main():
