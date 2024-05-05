@@ -8,7 +8,7 @@ from tensorflow.keras.layers import Input, Reshape, Conv1D, MaxPooling1D, Flatte
 from tensorflow.keras.optimizers import Adam, SGD, RMSprop
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
-
+import os
 
 
 # Clase para cargar y preparar los datos
@@ -57,7 +57,17 @@ class GoalsPredictionModel:
         self.best_config = None
         self.best_mae = float('inf')
 
+    def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
+        if os.path.exists(model_path):
+            # Cargar el modelo pre-entrenado
+            self.best_model = cargar_modelo(model_path)
+        else:
+            # Entrenar un nuevo modelo
+            self.train_model(configurations, X_train, y_train, X_test, y_test)
+            guardar_modelo(self.best_model, model_path)
+
     def train_model(self, X_train, y_train, X_test, y_test):
+        tf.random.set_seed(42)
         for config in self.configurations:
             input_layer = Input(shape=(X_train.shape[1],))
             dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
@@ -97,7 +107,6 @@ class GoalsPredictionModel:
     
 
 
-
 class ModelEvaluation:
     def __init__(self, model):
         self.model = model
@@ -121,7 +130,7 @@ class ModelEvaluation:
         plt.ylabel('MAE')
         plt.title('MAE Predicción de Goles para local y visitante')
         plt.tight_layout()
-        plt.savefig('../resultados/mae_redes_goles.png')
+        plt.savefig('resultados/mae_redes_goles.png')
         plt.show()
     
 
@@ -135,7 +144,6 @@ def guardar_modelo(modelo, ruta_archivo):
 
 def cargar_modelo(ruta_archivo):
     return tf.keras.models.load_model(ruta_archivo)
-model = tf.keras.models.load_model('../modelos/modelo_dnn_goals.keras')
 
 
 def data_usuario(ruta_df, ruta_data):
@@ -218,49 +226,58 @@ def datos_usuario(df, equipo_local, equipo_visitante):
 
 
 
-def main():
-    tf.random.set_seed(42)
-    # Cargar los datos
-    data_loader = LoadDataGoles('../dataframe/champions.csv')
-    data_goles = data_loader.load_data()
-    X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
+# Cargar los datos
+data_loader = LoadDataGoles('dataframe/champions.csv')
+data_goles = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
 
-    configurations = [
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 20, 'dropout': 0.2}
-    ]
+configurations = [
+{'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+{'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+{'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+{'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
+{'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1},
+{'units': 64, 'filters': 32, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
+{'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 20, 'dropout': 0.2},
+{'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
+{'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 20, 'dropout': 0.3},
+{'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+{'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 16, 'epochs': 15, 'dropout': 0.1},
+{'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
+{'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
+]
 
-    goals_model_trainer = GoalsPredictionModel(configurations)
-    goals_model_trainer.train_model(X_train, y_train, X_test, y_test)
+goals_model_trainer = GoalsPredictionModel(configurations)
+goals_model_trainer.train_model(X_train, y_train, X_test, y_test)
 
-    goals_model = goals_model_trainer.get_best_model()
-    best_config = goals_model_trainer.get_best_config()
+goals_model = goals_model_trainer.get_best_model()
+best_config = goals_model_trainer.get_best_config()
 
-    model_evaluator = ModelEvaluation(goals_model)
-    model_evaluator.evaluate_model(X_test, y_test)
+model_evaluator = ModelEvaluation(goals_model)
+model_evaluator.evaluate_model(X_test, y_test)
 
-    guardar_modelo(goals_model, '../modelos/modelo_dnn_goals.keras')
-    model2 = cargar_modelo('../modelos/modelo_dnn_goals.keras')
+guardar_modelo(goals_model, 'modelos/modelo_dnn_goals.keras')
+model2 = cargar_modelo('modelos/modelo_dnn_goals.keras')
 
-    df = data_usuario('../dataframe/champions_23_24.csv', '../dataframe/champions.csv')
+df = data_usuario('dataframe/champions_23_24.csv', 'dataframe/champions.csv')
 
-    # 1. Pedir al usuario que ingrese el equipo local
-    print("Seleccione el equipo local:")
-    equipos_disponibles = df['Local'].unique()
-    print(equipos_disponibles)
+# 1. Pedir al usuario que ingrese el equipo local
+print("Seleccione el equipo local:")
+equipos_disponibles = df['Local'].unique()
+print(equipos_disponibles)
 
-    equipo_local = int(input("Ingrese el nombre del equipo local: "))
-    equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
+equipo_local = int(input("Ingrese el nombre del equipo local: "))
+equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
 
-    nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
+nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
 
-    X_prediccion = scaler.transform(nuevo_dataframe)
-    class_probabilities_prediccion = model2.predict(X_prediccion)
+X_prediccion = scaler.transform(nuevo_dataframe)
+class_probabilities_prediccion = model2.predict(X_prediccion)
 
-    print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
-    print("Goles locales:", class_probabilities_prediccion[0])
-    print("Goles visitantes:", class_probabilities_prediccion[1])
+print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
+print("Goles locales:", class_probabilities_prediccion[0])
+print("Goles visitantes:", class_probabilities_prediccion[1])
 
 
-if __name__ == "__main__":
-    main()
+
 

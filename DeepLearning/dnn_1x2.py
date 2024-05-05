@@ -1,14 +1,14 @@
+import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Reshape, Conv1D, MaxPooling1D, Flatten, Dense, Dropout
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-
+from matplotlib import pyplot as plt
 
 class LoadData:
     def __init__(self, file_path):
@@ -44,38 +44,51 @@ class LoadData:
         
         return X_train, X_test, y_train, y_test, scaler, X, y
 
-
-
-'''Ajuste de hiperparámetros'''
-
 class Model:
-    def __init__(self, configurations):
-        self.configurations = configurations
+    def __init__(self):
         self.best_model = None
         self.best_config = None
-        self.best_accuracy = 0
+        self.best_mae = float('inf')
 
-    def train_model(self, X_train, y_train, X_test, y_test):
-        for config in self.configurations:
-            model = Sequential([
-            Reshape((X_train.shape[1],), input_shape=(X_train.shape[1],)),
-            Dense(config['units'], activation='relu'),
-            Dropout(config['dropout']),
-            Dense(3, activation='softmax')
-            ])
+    def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
+        if os.path.exists(model_path):
+            # Cargar el modelo pre-entrenado
+            self.best_model = cargar_modelo(model_path)
+        else:
+            # Entrenar un nuevo modelo
+            self.train_model(configurations, X_train, y_train, X_test, y_test)
+            guardar_modelo(self.best_model, model_path)
+
+    def train_model(self, configurations, X_train, y_train, X_test, y_test):
+        tf.random.set_seed(42)
+        for config in configurations:
+            input_layer = Input(shape=(X_train.shape[1],))
+            dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
+            dropout_layer1 = Dropout(config['dropout'])(dense_layer1)
+            dense_layer2 = Dense(config['units'], activation='relu')(dropout_layer1)
+            dropout_layer2 = Dropout(config['dropout'])(dense_layer2)
+
+            # Salida para la predicción de goles locales
+            local_goals_output = Dense(1, name='local_goals_output')(dropout_layer2)
+            # Salida para la predicción de goles visitantes
+            visitor_goals_output = Dense(1, name='visitor_goals_output')(dropout_layer2)
+            
+            model = Model(inputs=input_layer, outputs=[local_goals_output, visitor_goals_output])
 
             optimizer = Adam(learning_rate=config['learning_rate'])
-            model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-
-            history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
+            model.compile(optimizer=optimizer, loss='mse', metrics=['mae', 'mae'])
             
-            self.history = history
-            _, accuracy = model.evaluate(X_test, y_test)
+            history = model.fit(X_train, [y_train[:, 0], y_train[:, 1]], epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
             
-            if accuracy > self.best_accuracy:
-                self.best_accuracy = accuracy
+            _, local_mae, visitor_mae = model.evaluate(X_test, [y_test[:, 0], y_test[:, 1]])
+            total_mae = (local_mae + visitor_mae) / 2
+            
+            if total_mae < self.best_mae:
+                self.best_mae = total_mae
                 self.best_model = model
                 self.best_config = config
+            
+        return history
     
     def get_best_model(self):
         return self.best_model
@@ -83,19 +96,24 @@ class Model:
     def get_best_config(self):
         return self.best_config
 
+    def save_model(self, file_path):
+        self.best_model.save(file_path)
 
+    def predict(self, X):
+        # Hacer predicciones utilizando el modelo
+        return self.best_model.predict(X)
 
 
 class ModelEvaluation:
     def __init__(self, model):
         self.model = model
     
-    def evaluate_model(self, X_test, y_test, class_labels, model):
+    def evaluate_model(self, X_test, y_test, class_labels):
         # Evaluar el modelo
-        loss, accuracy = model.evaluate(X_test, y_test)
+        loss, local_loss, visitor_loss = self.model.evaluate(X_test, y_test)
 
         # Generar predicciones
-        class_probabilities = model.predict(X_test)
+        class_probabilities = self.model.predict(X_test)
         predictions = np.argmax(class_probabilities, axis=1)
         true_labels = np.argmax(y_test, axis=1)
 
@@ -143,20 +161,13 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('./resultados/learning_curve_dnn1X2.png')
         plt.show()
-
-
-
 
 def guardar_modelo(modelo, ruta):
     tf.keras.models.save_model(modelo, ruta)
 
-
 def cargar_modelo(ruta):
     return tf.keras.models.load_model(ruta)
-
-
 
 def data_usuario(ruta_df, ruta_data):
     # Cargar los datos
@@ -169,7 +180,6 @@ def data_usuario(ruta_df, ruta_data):
     df = pd.get_dummies(df, columns=['Ronda'], drop_first=True)
 
     return df
-
 
 
 def datos_usuario(df, equipo_local, equipo_visitante):
@@ -235,12 +245,10 @@ def datos_usuario(df, equipo_local, equipo_visitante):
 
     return nuevo_dataframe
 
-tf.random.set_seed(42)
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
-# Definir diferentes configuraciones de red y hiperparámetros
+# Importaciones necesarias
+
+# Definición de las configuraciones
 configurations = [
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
     {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
@@ -257,42 +265,7 @@ configurations = [
     {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
-model_trainer = Model(configurations)
-model_trainer.train_model(X_train, y_train, X_test, y_test)
-
-model = model_trainer.get_best_model()
-best_config = model_trainer.get_best_config()
-print("Mejor configuración:", best_config)
-
-model_evaluator = ModelEvaluation(model)
-model_evaluator.evaluate_model(X_test, y_test, y.columns, model)
-ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
-
-guardar_modelo(model, '/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/modelos/dnn_1x2.keras')
-model = cargar_modelo('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/modelos/dnn_1x2.keras')
-
-
-'''def main():
-    df = data_usuario('../dataframe/champions_23_24.csv', '../dataframe/champions.csv')
-
-    # 1. Pedir al usuario que ingrese el equipo local
-    print("Seleccione el equipo local:")
-    equipos_disponibles = df['Local'].unique()
-    print(equipos_disponibles)
-
-    equipo_local = int(input("Ingrese el nombre del equipo local: "))
-    equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
-
-    nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
-
-    X_prediccion = scaler.transform(nuevo_dataframe)
-    class_probabilities_prediccion = model.predict(X_prediccion)
-
-    print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
-    for i, prob in enumerate(class_probabilities_prediccion[0]):
-        print(f"{y.columns[i]}: {prob*100:.3f}%")
-
-
-
-if __name__ == '__main__':
-    main()'''
+# Load Data
+data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+data = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)

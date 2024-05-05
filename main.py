@@ -5,7 +5,7 @@ from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
-from DeepLearning.dnn_1x2 import model, data_usuario, datos_usuario, scaler, y
+from DeepLearning.dnn_1x2 import Model, data_usuario, datos_usuario, scaler, y, X_train, y_train, X_test, y_test, configurations
 
 
 def main():
@@ -227,6 +227,8 @@ def main():
 
     if var == 'C':
         df = data_usuario('dataframe/champions_23_24.csv', 'dataframe/champions.csv')
+        model = Model()
+        model.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
 
         # 1. Pedir al usuario que ingrese el equipo local
         print("Seleccione el equipo local:")
@@ -239,12 +241,21 @@ def main():
         nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
 
         X_prediccion = scaler.transform(nuevo_dataframe)
+
+
         class_probabilities_prediccion = model.predict(X_prediccion)
 
         print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
         for i, prob in enumerate(class_probabilities_prediccion[0]):
             print(f"{y.columns[i]}: {prob*100:.3f}%")
         
+        model2 = Model()
+        model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_goles.keras')
+        class_probabilities_prediccion_goals = model2.predict(X_prediccion)
+
+        print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
+        print("Goles locales:", class_probabilities_prediccion_goals[0])
+        print("Goles visitantes:", class_probabilities_prediccion_goals[1])
 
 
 if __name__ == '__main__':
