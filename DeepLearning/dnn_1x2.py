@@ -5,7 +5,7 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.layers import Dense, Dropout, Reshape
 from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
 from matplotlib import pyplot as plt
@@ -44,47 +44,43 @@ class LoadData:
         
         return X_train, X_test, y_train, y_test, scaler, X, y
 
-class Model:
+
+
+class Model1x2:
     def __init__(self):
         self.best_model = None
         self.best_config = None
-        self.best_mae = float('inf')
+        self.best_accuracy = 0
 
     def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
         if os.path.exists(model_path):
             # Cargar el modelo pre-entrenado
-            self.best_model = cargar_modelo(model_path)
+            self.best_model = self.cargar_modelo(model_path)
         else:
             # Entrenar un nuevo modelo
             self.train_model(configurations, X_train, y_train, X_test, y_test)
-            guardar_modelo(self.best_model, model_path)
+            self.guardar_modelo(model_path)
 
     def train_model(self, configurations, X_train, y_train, X_test, y_test):
         tf.random.set_seed(0)
         for config in configurations:
-            input_layer = Input(shape=(X_train.shape[1],))
-            dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
-            dropout_layer1 = Dropout(config['dropout'])(dense_layer1)
-            dense_layer2 = Dense(config['units'], activation='relu')(dropout_layer1)
-            dropout_layer2 = Dropout(config['dropout'])(dense_layer2)
-
-            # Salida para la predicción de goles locales
-            local_goals_output = Dense(1, name='local_goals_output')(dropout_layer2)
-            # Salida para la predicción de goles visitantes
-            visitor_goals_output = Dense(1, name='visitor_goals_output')(dropout_layer2)
-            
-            model = Model(inputs=input_layer, outputs=[local_goals_output, visitor_goals_output])
+            model = Sequential([
+            Reshape((X_train.shape[1],), input_shape=(X_train.shape[1],)),
+            Dense(config['units'], activation='relu'),
+            Dropout(config['dropout']),
+            Dense(3, activation='softmax')
+            ])
 
             optimizer = Adam(learning_rate=config['learning_rate'])
-            model.compile(optimizer=optimizer, loss='mse', metrics=['mae', 'mae'])
+            model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+            history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
             
-            history = model.fit(X_train, [y_train[:, 0], y_train[:, 1]], epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
+            self.history = history
+            _, accuracy = model.evaluate(X_test, y_test)
             
-            _, local_mae, visitor_mae = model.evaluate(X_test, [y_test[:, 0], y_test[:, 1]])
-            total_mae = (local_mae + visitor_mae) / 2
-            
-            if total_mae < self.best_mae:
-                self.best_mae = total_mae
+            if accuracy > self.best_accuracy:
+                self.best_accuracy = accuracy
                 self.best_model = model
                 self.best_config = config
             
@@ -96,8 +92,11 @@ class Model:
     def get_best_config(self):
         return self.best_config
 
-    def save_model(self, file_path):
-        self.best_model.save(file_path)
+    def guardar_modelo(self, ruta):
+        self.best_model.save(ruta)
+
+    def cargar_modelo(self, ruta):
+        return tf.keras.models.load_model(ruta)
 
     def predict(self, X):
         # Hacer predicciones utilizando el modelo
@@ -110,7 +109,9 @@ class ModelEvaluation:
     
     def evaluate_model(self, X_test, y_test, class_labels):
         # Evaluar el modelo
-        loss, local_loss, visitor_loss = self.model.evaluate(X_test, y_test)
+        loss, accuracy = self.model.evaluate(X_test, y_test)
+        print("Loss:", loss)
+        print("Accuracy:", accuracy)
 
         # Generar predicciones
         class_probabilities = self.model.predict(X_test)
@@ -119,6 +120,8 @@ class ModelEvaluation:
 
         # Calcular y mostrar la matriz de confusión
         conf_matrix = confusion_matrix(true_labels, predictions)
+        print("Confusion Matrix:")
+        print(conf_matrix)
 
         self.plot_matriz_confusion(conf_matrix, class_labels)
 
@@ -162,12 +165,8 @@ class ModelEvaluation:
         plt.legend()
         plt.tight_layout()
         plt.show()
+        
 
-def guardar_modelo(modelo, ruta):
-    tf.keras.models.save_model(modelo, ruta)
-
-def cargar_modelo(ruta):
-    return tf.keras.models.load_model(ruta)
 
 def data_usuario(ruta_df, ruta_data):
     # Cargar los datos

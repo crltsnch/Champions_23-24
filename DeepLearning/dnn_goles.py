@@ -48,7 +48,6 @@ class LoadDataGoles:
 
 
 
-
 # Clase para entrenar y evaluar el modelo de predicción de goles locales y visitantes
 class GoalsPredictionModel:
     def __init__(self):
@@ -59,11 +58,11 @@ class GoalsPredictionModel:
     def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
         if os.path.exists(model_path):
             # Cargar el modelo pre-entrenado
-            self.best_model = cargar_modelo(model_path)
+            self.best_model = self.cargar_modelo(model_path)
         else:
             # Entrenar un nuevo modelo
             self.train_model(configurations, X_train, y_train, X_test, y_test)
-            guardar_modelo(self.best_model, model_path)
+            self.guardar_modelo(model_path)
 
     def train_model(self, configurations, X_train, y_train, X_test, y_test):
         # Set random seed for reproducability
@@ -103,6 +102,12 @@ class GoalsPredictionModel:
     
     def get_best_config(self):
         return self.best_config
+    
+    def guardar_modelo(self, ruta):
+        self.best_model.save(ruta)
+
+    def cargar_modelo(self, ruta):
+        return tf.keras.models.load_model(ruta)
 
     def predict(self, X):
         # Hacer predicciones utilizando el modelo
@@ -135,96 +140,6 @@ class ModelEvaluation:
         plt.savefig('resultados/mae_redes_goles.png')
         plt.show()
     
-
-
-
-# Guardar el modelo
-def guardar_modelo(modelo, ruta_archivo):
-    tf.keras.models.save_model(modelo, ruta_archivo)
-
-
-
-def cargar_modelo(ruta_archivo):
-    return tf.keras.models.load_model(ruta_archivo)
-
-
-def data_usuario(ruta_df, ruta_data):
-    # Cargar los datos
-    df = pd.read_csv(ruta_df)
-    data = pd.read_csv(ruta_data)
-    df = pd.concat([df, data], ignore_index=True)
-
-    # Suponiendo que tu DataFrame se llama df
-    df = df.sort_values(by=['Temporada', 'Ronda'], ascending=[True, True])
-    df = pd.get_dummies(df, columns=['Ronda'], drop_first=True)
-
-    return df
-
-
-
-def datos_usuario(df, equipo_local, equipo_visitante):
-    # Filtrar el DataFrame para obtener la última fila donde el equipo local y visitante coincidan con los ingresados por el usuario
-    filtro_ultimo_partido = ((df['Local'] == equipo_local) & (df['Visitante'] == equipo_visitante)) | ((df['Local'] == equipo_visitante) & (df['Visitante'] == equipo_local))
-
-    # Obtener el último partido entre los equipos ingresados por el usuario
-    ultimo_partido_entre_equipos = df[filtro_ultimo_partido].iloc[-1]
-
-    # Obtener los valores para las columnas %_Victorias_Local, %_Empate, %_Victoria_Visitante
-    valores_prediccion = ultimo_partido_entre_equipos[['%_Victorias_Local', '%_Empate', '%_Victoria_Visitante', 'Ronda_Group stage', 'Ronda_Quarter-finals',	'Ronda_Round of 16', 'Ronda_Semi-finals']]
-
-    if ultimo_partido_entre_equipos['Local'] == equipo_local and ultimo_partido_entre_equipos['Visitante'] == equipo_visitante:
-        porcentajes_de_los_dos = ultimo_partido_entre_equipos[['%_Equipo1_Ganado', '%_Equipo2_Ganado']]
-
-    elif ultimo_partido_entre_equipos['Local'] == equipo_visitante and ultimo_partido_entre_equipos['Visitante'] == equipo_local:
-        porcentajes_de_los_dos = ultimo_partido_entre_equipos[['%_Equipo1_Ganado', '%_Equipo2_Ganado']]
-        porcentajes_de_los_dos = porcentajes_de_los_dos.rename({'%_Equipo1_Ganado': '%_Equipo2_Ganado', '%_Equipo2_Ganado': '%_Equipo1_Ganado'})
-
-
-    # 3. Filtrar el DataFrame para obtener las estadísticas del equipo local
-    filtro_local = (df['Local'] == equipo_local) | (df['Visitante'] == equipo_local)
-    ultima_aparicion_local = df[filtro_local].iloc[-1]
-    if ultima_aparicion_local['Local'] == equipo_local:
-        estadisticas_equipo_local = ultima_aparicion_local[['%_1_G_Temporada', '%_1_G_Temporada_L', '%_1_E_Temporada_L', '%_1_P_Temporada_L', '1_Media_G', '1_Media_G_Local', '1_Media_Goles_PP', '1_ValorJugadores', '1_MediaJugadores']]
-    elif ultima_aparicion_local['Visitante'] == equipo_local:
-        estadisticas_equipo_local = ultima_aparicion_local[['%_2_G_Temporada', '%_2_G_Temporada_L', '%_2_E_Temporada_L', '%_2_P_Temporada_L', '2_Media_G', '2_Media_G_Local', '2_Media_Goles_PP', '2_ValorJugadores', '2_MediaJugadores']]
-        #Cambiar el numero del nombre de las columnas porque si es el local del usuario pasara a ser las columnas con 1 en vez de 2
-        estadisticas_equipo_local.index = ['%_1_G_Temporada', '%_1_G_Temporada_L', '%_1_E_Temporada_L', '%_1_P_Temporada_L', '1_Media_G', '1_Media_G_Local', '1_Media_Goles_PP', '1_ValorJugadores', '1_MediaJugadores']
-
-    # 4. Filtrar el DataFrame para obtener las estadísticas del equipo visitante
-    filtro_visitante = (df['Local'] == equipo_visitante) | (df['Visitante'] == equipo_visitante)
-    ultima_aparicion_visitante = df[filtro_visitante].iloc[-1]
-    if ultima_aparicion_visitante['Local'] == equipo_visitante:
-        estadisticas_equipo_visitante = ultima_aparicion_visitante[['%_1_G_Temporada', '%_1_G_Temporada_L', '%_1_E_Temporada_L', '%_1_P_Temporada_L', '1_Media_G', '1_Media_G_Local', '1_Media_Goles_PP', '1_ValorJugadores', '1_MediaJugadores']]
-        estadisticas_equipo_visitante = estadisticas_equipo_visitante.rename({'%_1_G_Temporada': '%_2_G_Temporada', '%_1_G_Temporada_L': '%_2_G_Temporada_L', '%_1_E_Temporada_L': '%_2_E_Temporada_L', '%_1_P_Temporada_L': '%_2_P_Temporada_L', '1_Media_G': '2_Media_G', '1_Media_G_Local': '2_Media_G_Local', '1_Media_Goles_PP': '2_Media_Goles_PP', '1_ValorJugadores': '2_ValorJugadores', '1_MediaJugadores': '2_MediaJugadores'})
-    elif ultima_aparicion_visitante['Visitante'] == equipo_visitante:
-        estadisticas_equipo_visitante = ultima_aparicion_visitante[['%_2_G_Temporada', '%_2_G_Temporada_L', '%_2_E_Temporada_L', '%_2_P_Temporada_L', '2_Media_G', '2_Media_G_Local', '2_Media_Goles_PP', '2_ValorJugadores', '2_MediaJugadores']]
-
-
-    # Combinar las estadísticas de ambos equipos para predecir el resultado del partido
-    datos_partido = pd.concat([estadisticas_equipo_local, estadisticas_equipo_visitante, valores_prediccion, porcentajes_de_los_dos])
-
-    # Crear un nuevo DataFrame vacío con las columnas especificadas en el orden deseado
-    nuevo_dataframe = pd.DataFrame(columns=['Local', 'Visitante', '%_Victorias_Local', '%_Empate', '%_Victoria_Visitante',
-                                            '%_Equipo1_Ganado', '%_Equipo2_Ganado', '%_1_G_Temporada', '%_1_G_Temporada_L',
-                                            '%_1_E_Temporada_L', '%_1_P_Temporada_L', '1_Media_G', '1_Media_G_Local', '1_Media_Goles_PP',
-                                            '1_ValorJugadores', '1_MediaJugadores', '%_2_G_Temporada', '%_2_G_Temporada_L',
-                                            '%_2_E_Temporada_L', '%_2_P_Temporada_L', '2_Media_G', '2_Media_G_Local', '2_Media_Goles_PP',
-                                            '2_ValorJugadores', '2_MediaJugadores', 'Ronda_Group stage', 'Ronda_Quarter-finals', 'Ronda_Round of 16', 'Ronda_Semi-finals'])
-
-    # Agregar una fila con los valores proporcionados al nuevo DataFrame
-    nuevo_dataframe.loc[0] = [equipo_local, equipo_visitante, datos_partido['%_Victorias_Local'], datos_partido['%_Empate'],
-                            datos_partido['%_Victoria_Visitante'], datos_partido['%_Equipo1_Ganado'], datos_partido['%_Equipo2_Ganado'],
-                            datos_partido['%_1_G_Temporada'], datos_partido['%_1_G_Temporada_L'], datos_partido['%_1_E_Temporada_L'],
-                            datos_partido['%_1_P_Temporada_L'], datos_partido['1_Media_G'], datos_partido['1_Media_G_Local'],
-                            datos_partido['1_Media_Goles_PP'], datos_partido['1_ValorJugadores'], datos_partido['1_MediaJugadores'],
-                            datos_partido['%_2_G_Temporada'], datos_partido['%_2_G_Temporada_L'], datos_partido['%_2_E_Temporada_L'],
-                            datos_partido['%_2_P_Temporada_L'], datos_partido['2_Media_G'], datos_partido['2_Media_G_Local'],
-                            datos_partido['2_Media_Goles_PP'], datos_partido['2_ValorJugadores'], datos_partido['2_MediaJugadores'],
-                            datos_partido['Ronda_Group stage'], datos_partido['Ronda_Quarter-finals'], datos_partido['Ronda_Round of 16'], datos_partido['Ronda_Semi-finals']]
-
-
-    return nuevo_dataframe
-
 
 
 
