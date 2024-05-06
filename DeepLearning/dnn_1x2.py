@@ -165,7 +165,6 @@ class ModelEvaluation:
         plt.legend()
         plt.tight_layout()
         plt.show()
-        
 
 
 def data_usuario(ruta_df, ruta_data):

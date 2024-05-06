@@ -5,8 +5,9 @@ from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
-from DeepLearning.dnn_1x2 import Model, data_usuario, datos_usuario, scaler, y, X_train, y_train, X_test, y_test, configurations
+from DeepLearning.dnn_1x2 import Model1x2, data_usuario, datos_usuario, scaler, y, X_train, y_train, X_test, y_test, configurations
 from DeepLearning.dnn_goles import GoalsPredictionModel
+from DeepLearning.dnn_marcanambos import ModelMarcanAmbos
 
 
 def main():
@@ -228,7 +229,8 @@ def main():
 
     if var == 'C':
         df = data_usuario('dataframe/champions_23_24.csv', 'dataframe/champions.csv')
-        model = Model()
+
+        model = Model1x2()
         model.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
 
         # 1. Pedir al usuario que ingrese el equipo local
@@ -257,6 +259,12 @@ def main():
         print("Goles locales:", class_probabilities_prediccion_goals[0])
         print("Goles visitantes:", class_probabilities_prediccion_goals[1])
 
+        model3 = ModelMarcanAmbos()
+        model3.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_ambos_marcan.keras')
+        class_probabilities_prediccion_marcan = model3.predict(X_prediccion)
 
-if __name__ == '__main__':
-    main()
+        for i, pred in enumerate(class_probabilities_prediccion_marcan):
+            if pred == 1:
+                print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n Ambos equipos marcan goles")
+            else:
+                print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n No marcan ambos")

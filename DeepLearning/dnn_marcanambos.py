@@ -11,7 +11,6 @@ from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
 
 
-
 class LoadData:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -84,9 +83,8 @@ class ModelMarcanAmbos:
             model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
 
             history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
+            
             self.history = history
-            
-            
             _, accuracy = model.evaluate(X_test, y_test)
             
             if accuracy > self.best_accuracy:
@@ -179,38 +177,6 @@ class ModelEvaluation:
 
 
 
-
-def main():
-    # 1. Pedir al usuario que ingrese el equipo local
-    print("Seleccione el equipo local:")
-    equipos_disponibles = df['Local'].unique()
-    print(equipos_disponibles)
-
-    equipo_local = int(input("Ingrese el nombre del equipo local: "))
-    equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
-
-    # 2. Crear un nuevo DataFrame con los datos del usuario
-    nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
-
-    # 3. Escalar las características del nuevo DataFrame
-    X_prediccion = scaler.transform(nuevo_dataframe)
-
-    # Obtener la predicción y la probabilidad asociada
-    predicciones =  model.predict(X_prediccion)
-
-    for i, pred in enumerate(predicciones):
-        if pred == 1:
-            print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n Ambos equipos marcan goles")
-        else:
-            print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n No marcan ambos")
-
-
-if __name__ == "__main__":
-    main()
-
-
-
-
 # Definir diferentes configuraciones de red y hiperparámetros
 configurations = [
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
@@ -238,6 +204,18 @@ configurations = [
 ]
 
 # Cargar los datos
-data_loader = LoadData('../dataframe/champions.csv')
+data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
 data = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
+
+model_trainer = ModelMarcanAmbos()
+model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
+
+model = model_trainer.get_best_model()
+best_config = model_trainer.get_best_config()
+print("Mejor configuración:", best_config)
+
+
+model_evaluator = ModelEvaluation(model)
+model_evaluator.evaluate_model(X_test, y_test)
+ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
