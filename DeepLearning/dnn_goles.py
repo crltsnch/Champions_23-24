@@ -51,8 +51,7 @@ class LoadDataGoles:
 
 # Clase para entrenar y evaluar el modelo de predicción de goles locales y visitantes
 class GoalsPredictionModel:
-    def __init__(self, configurations):
-        self.configurations = configurations
+    def __init__(self):
         self.best_model = None
         self.best_config = None
         self.best_mae = float('inf')
@@ -66,9 +65,9 @@ class GoalsPredictionModel:
             self.train_model(configurations, X_train, y_train, X_test, y_test)
             guardar_modelo(self.best_model, model_path)
 
-    def train_model(self, X_train, y_train, X_test, y_test):
+    def train_model(self, configurations, X_train, y_train, X_test, y_test):
         tf.random.set_seed(42)
-        for config in self.configurations:
+        for config in configurations:
             input_layer = Input(shape=(X_train.shape[1],))
             dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
             dropout_layer1 = Dropout(config['dropout'])(dense_layer1)

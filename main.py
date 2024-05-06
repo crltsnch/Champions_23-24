@@ -251,7 +251,7 @@ def main():
             print(f"{y.columns[i]}: {prob*100:.3f}%")
         
         model2 = GoalsPredictionModel()
-        model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_goles.keras')
+        model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/modelo_dnn_goals.keras')
         class_probabilities_prediccion_goals = model2.predict(X_prediccion)
 
         print("Goles locales:", class_probabilities_prediccion_goals[0])
