@@ -66,7 +66,8 @@ class GoalsPredictionModel:
             guardar_modelo(self.best_model, model_path)
 
     def train_model(self, configurations, X_train, y_train, X_test, y_test):
-        tf.random.set_seed(42)
+        # Set random seed for reproducability
+        tf.random.set_seed(0)
         for config in configurations:
             input_layer = Input(shape=(X_train.shape[1],))
             dense_layer1 = Dense(config['units'], activation='relu')(input_layer)

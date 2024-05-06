@@ -1,14 +1,15 @@
-import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv1D, MaxPooling1D, Flatten, Dropout, Reshape
 from tensorflow.keras.optimizers import Adam
-from sklearn.metrics import confusion_matrix
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+
+
 
 class LoadData:
     def __init__(self, file_path):
@@ -22,12 +23,16 @@ class LoadData:
         # Convertir la columna "Ronda" en variables dummy
         data = pd.get_dummies(data, columns=['Ronda'], drop_first=True)
 
+        # Suponiendo que tu DataFrame se llama 'dataframe'
+        data['MarcanAmbos'] = (data['GolesLocal'] > 0) & (data['GolesVisitante'] > 0)
+        data['MarcanAmbos'] = data['MarcanAmbos'].astype(int)
+
         # Eliminar columnas irrelevantes
         data = data.drop(['idPartido', 'Temporada', 'Evento', 'GolesLocal', 'GolesVisitante'], axis=1)
 
         # Separar características y etiquetas
-        X = data.drop(['VictoriaLocal', 'Empate', 'VictoriaVisitante'], axis=1)
-        y = data[['VictoriaLocal', 'Empate', 'VictoriaVisitante']]
+        X = data.drop(['VictoriaLocal', 'Empate', 'VictoriaVisitante', 'MarcanAmbos'], axis=1)
+        y = data['MarcanAmbos']
 
         # Escalar características
         scaler = StandardScaler()
@@ -43,95 +48,113 @@ class LoadData:
         y_test = tf.convert_to_tensor(y_test.values, dtype=tf.float32)
         
         return X_train, X_test, y_train, y_test, scaler, X, y
+    
+# Cargar los datos
+data_loader = LoadData('../dataframe/champions.csv')
+data = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
+
+
 
 class Model:
     def __init__(self):
         self.best_model = None
         self.best_config = None
-        self.best_mae = float('inf')
+        self.best_accuracy = 0
 
-    def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
-        if os.path.exists(model_path):
-            # Cargar el modelo pre-entrenado
-            self.best_model = cargar_modelo(model_path)
-        else:
-            # Entrenar un nuevo modelo
-            self.train_model(configurations, X_train, y_train, X_test, y_test)
-            guardar_modelo(self.best_model, model_path)
-
-    def train_model(self, configurations, X_train, y_train, X_test, y_test):
-        tf.random.set_seed(0)
-        for config in configurations:
-            input_layer = Input(shape=(X_train.shape[1],))
-            dense_layer1 = Dense(config['units'], activation='relu')(input_layer)
-            dropout_layer1 = Dropout(config['dropout'])(dense_layer1)
-            dense_layer2 = Dense(config['units'], activation='relu')(dropout_layer1)
-            dropout_layer2 = Dropout(config['dropout'])(dense_layer2)
-
-            # Salida para la predicción de goles locales
-            local_goals_output = Dense(1, name='local_goals_output')(dropout_layer2)
-            # Salida para la predicción de goles visitantes
-            visitor_goals_output = Dense(1, name='visitor_goals_output')(dropout_layer2)
-            
-            model = Model(inputs=input_layer, outputs=[local_goals_output, visitor_goals_output])
+    def train_model(self, X_train, y_train):
+        tf.random.set_seed(42)
+        for config in self.configurations:
+            model = Sequential([
+                Dense(config['units'], activation='relu', input_shape=(X_train.shape[1],)),
+                Dropout(config['dropout']),
+                Dense(config['units'], activation='relu'),
+                Dropout(config['dropout']),
+                Dense(1, activation='sigmoid')
+            ])
 
             optimizer = Adam(learning_rate=config['learning_rate'])
-            model.compile(optimizer=optimizer, loss='mse', metrics=['mae', 'mae'])
+            model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+
+            history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
+            self.history = history
             
-            history = model.fit(X_train, [y_train[:, 0], y_train[:, 1]], epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
             
-            _, local_mae, visitor_mae = model.evaluate(X_test, [y_test[:, 0], y_test[:, 1]])
-            total_mae = (local_mae + visitor_mae) / 2
+            _, accuracy = model.evaluate(X_test, y_test)
             
-            if total_mae < self.best_mae:
-                self.best_mae = total_mae
+            if accuracy > self.best_accuracy:
+                self.best_accuracy = accuracy
                 self.best_model = model
                 self.best_config = config
-            
-        return history
+
     
     def get_best_model(self):
         return self.best_model
     
     def get_best_config(self):
         return self.best_config
+    
 
-    def save_model(self, file_path):
-        self.best_model.save(file_path)
+# Definir diferentes configuraciones de red y hiperparámetros
+configurations = [
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2}, 
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3}
+]
 
-    def predict(self, X):
-        # Hacer predicciones utilizando el modelo
-        return self.best_model.predict(X)
 
 
 class ModelEvaluation:
     def __init__(self, model):
         self.model = model
     
-    def evaluate_model(self, X_test, y_test, class_labels):
+    def evaluate_model(self, X_test, y_test):
         # Evaluar el modelo
-        loss, local_loss, visitor_loss = self.model.evaluate(X_test, y_test)
+        loss, accuracy = self.model.evaluate(X_test, y_test)
+        print("Loss:", loss)
+        print("Accuracy:", accuracy)
 
         # Generar predicciones
         class_probabilities = self.model.predict(X_test)
-        predictions = np.argmax(class_probabilities, axis=1)
-        true_labels = np.argmax(y_test, axis=1)
+        predictions = np.round(class_probabilities).flatten()
+        true_labels = y_test.numpy().flatten()
 
         # Calcular y mostrar la matriz de confusión
         conf_matrix = confusion_matrix(true_labels, predictions)
+        print("Confusion Matrix:")
+        print(conf_matrix)
 
-        self.plot_matriz_confusion(conf_matrix, class_labels)
+        self.plot_matriz_confusion(conf_matrix)
 
-    def plot_matriz_confusion(self, conf_matrix, class_labels):
+    def plot_matriz_confusion(self, conf_matrix):
         # Visualizar la matriz de confusión
         plt.imshow(conf_matrix, interpolation="nearest", cmap=plt.cm.Blues)
         plt.colorbar()
-        tick_marks = np.arange(len(class_labels))
-        plt.xticks(tick_marks, class_labels, rotation=45)
-        plt.yticks(tick_marks, class_labels)
+        tick_marks = np.arange(2)
+        plt.xticks(tick_marks, ['No Marcan Ambos', 'Marcan Ambos'], rotation=45)
+        plt.yticks(tick_marks, ['No Marcan Ambos', 'Marcan Ambos'])
         plt.xlabel("Predicted Class")
         plt.ylabel("True Class")
-        plt.title("Confusion Matrix for 1x2 Model")
+        plt.title("Confusion Matrix")
         plt.show()
 
     @staticmethod
@@ -148,7 +171,7 @@ class ModelEvaluation:
         plt.subplot(1, 2, 1)
         plt.plot(epochs, train_loss, 'r', label='Training loss')
         plt.plot(epochs, val_loss, 'b', label='Validation loss')
-        plt.title('Training and validation loss (1x2 Model)')
+        plt.title('Training and validation loss')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
@@ -156,30 +179,46 @@ class ModelEvaluation:
         plt.subplot(1, 2, 2)
         plt.plot(epochs, train_accuracy, 'r', label='Training accuracy')
         plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
-        plt.title('Training and validation accuracy (1x2 Model)')
+        plt.title('Training and validation accuracy')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
+        plt.savefig('../resultados/learning_curve_dnnambos.png')
         plt.show()
 
-def guardar_modelo(modelo, ruta):
-    tf.keras.models.save_model(modelo, ruta)
+# Asumiendo que ya tienes el modelo entrenado (model) y los datos de prueba (X_test, y_test)
+model_evaluator = ModelEvaluation(model)
+model_evaluator.evaluate_model(X_test, y_test)
 
-def cargar_modelo(ruta):
-    return tf.keras.models.load_model(ruta)
+ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
 
-def data_usuario(ruta_df, ruta_data):
-    # Cargar los datos
-    df = pd.read_csv(ruta_df)
-    data = pd.read_csv(ruta_data)
-    df = pd.concat([df, data], ignore_index=True)
 
-    # Suponiendo que tu DataFrame se llama df
-    df = df.sort_values(by=['Temporada', 'Ronda'], ascending=[True, True])
-    df = pd.get_dummies(df, columns=['Ronda'], drop_first=True)
+# In[5]:
 
-    return df
+
+# Guardar el modelo
+tf.keras.models.save_model(model, '../modelos/dnn_ambos_marcan.keras')
+model = tf.keras.models.load_model("../modelos/dnn_ambos_marcan.keras")
+
+
+# In[6]:
+
+
+import pandas as pd
+
+# Cargar los datos
+df = pd.read_csv("../dataframe/champions_23_24.csv")
+df = pd.concat([df, data], ignore_index=True)
+
+# Suponiendo que tu DataFrame se llama df
+df = df.sort_values(by=['Temporada', 'Ronda'], ascending=[True, True])
+df = pd.get_dummies(df, columns=['Ronda'], drop_first=True)
+
+df
+
+
+# In[7]:
 
 
 def datos_usuario(df, equipo_local, equipo_visitante):
@@ -246,26 +285,37 @@ def datos_usuario(df, equipo_local, equipo_visitante):
     return nuevo_dataframe
 
 
-# Importaciones necesarias
+datos_usuario(df, 14, 28)
 
-# Definición de las configuraciones
-configurations = [
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
-    {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1},
-    {'units': 64, 'filters': 32, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 20, 'dropout': 0.2},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 20, 'dropout': 0.3},
-    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 16, 'epochs': 15, 'dropout': 0.1},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
-    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
-]
 
-# Load Data
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
+# In[19]:
+
+
+def main():
+    # 1. Pedir al usuario que ingrese el equipo local
+    print("Seleccione el equipo local:")
+    equipos_disponibles = df['Local'].unique()
+    print(equipos_disponibles)
+
+    equipo_local = int(input("Ingrese el nombre del equipo local: "))
+    equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
+
+    # 2. Crear un nuevo DataFrame con los datos del usuario
+    nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
+
+    # 3. Escalar las características del nuevo DataFrame
+    X_prediccion = scaler.transform(nuevo_dataframe)
+
+    # Obtener la predicción y la probabilidad asociada
+    predicciones =  model.predict(X_prediccion)
+
+    for i, pred in enumerate(predicciones):
+        if pred == 1:
+            print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n Ambos equipos marcan goles")
+        else:
+            print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n No marcan ambos")
+
+
+if __name__ == "__main__":
+    main()
+
