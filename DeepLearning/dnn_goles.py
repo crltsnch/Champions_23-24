@@ -104,7 +104,9 @@ class GoalsPredictionModel:
     def get_best_config(self):
         return self.best_config
 
-    
+    def predict(self, X):
+        # Hacer predicciones utilizando el modelo
+        return self.best_model.predict(X)
 
 
 class ModelEvaluation:
@@ -226,11 +228,6 @@ def datos_usuario(df, equipo_local, equipo_visitante):
 
 
 
-# Cargar los datos
-data_loader = LoadDataGoles('dataframe/champions.csv')
-data_goles = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
-
 configurations = [
 {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
 {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
@@ -247,36 +244,11 @@ configurations = [
 {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
-goals_model_trainer = GoalsPredictionModel(configurations)
-goals_model_trainer.train_model(X_train, y_train, X_test, y_test)
+# Cargar los datos
+data_loader = LoadDataGoles('dataframe/champions.csv')
+data_goles = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
 
-goals_model = goals_model_trainer.get_best_model()
-best_config = goals_model_trainer.get_best_config()
-
-model_evaluator = ModelEvaluation(goals_model)
-model_evaluator.evaluate_model(X_test, y_test)
-
-guardar_modelo(goals_model, 'modelos/modelo_dnn_goals.keras')
-model2 = cargar_modelo('modelos/modelo_dnn_goals.keras')
-
-df = data_usuario('dataframe/champions_23_24.csv', 'dataframe/champions.csv')
-
-# 1. Pedir al usuario que ingrese el equipo local
-print("Seleccione el equipo local:")
-equipos_disponibles = df['Local'].unique()
-print(equipos_disponibles)
-
-equipo_local = int(input("Ingrese el nombre del equipo local: "))
-equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
-
-nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
-
-X_prediccion = scaler.transform(nuevo_dataframe)
-class_probabilities_prediccion = model2.predict(X_prediccion)
-
-print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
-print("Goles locales:", class_probabilities_prediccion[0])
-print("Goles visitantes:", class_probabilities_prediccion[1])
 
 
 

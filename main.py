@@ -6,6 +6,7 @@ from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
 from DeepLearning.dnn_1x2 import Model, data_usuario, datos_usuario, scaler, y, X_train, y_train, X_test, y_test, configurations
+from DeepLearning.dnn_goles import GoalsPredictionModel
 
 
 def main():
@@ -249,11 +250,10 @@ def main():
         for i, prob in enumerate(class_probabilities_prediccion[0]):
             print(f"{y.columns[i]}: {prob*100:.3f}%")
         
-        model2 = Model()
+        model2 = GoalsPredictionModel()
         model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_goles.keras')
         class_probabilities_prediccion_goals = model2.predict(X_prediccion)
 
-        print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
         print("Goles locales:", class_probabilities_prediccion_goals[0])
         print("Goles visitantes:", class_probabilities_prediccion_goals[1])
 
