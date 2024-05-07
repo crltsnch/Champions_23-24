@@ -259,6 +259,9 @@ def main():
         equipo_local = int(input("Ingrese el ID del equipo local: "))
         equipo_visitante = int(input("Ingrese el ID del equipo visitante: "))
 
+        nombre_equipo_local = equipos_dict_invertido.get(equipo_local)
+        nombre_equipo_visitante = equipos_dict_invertido.get(equipo_visitante)
+
         nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
 
         X_prediccion = scaler.transform(nuevo_dataframe)
@@ -266,7 +269,7 @@ def main():
 
         class_probabilities_prediccion = model.predict(X_prediccion)
 
-        print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
+        print(f"Probabilidades de clase predichas para el partido {nombre_equipo_local} VS. {nombre_equipo_visitante}:")
         for i, prob in enumerate(class_probabilities_prediccion[0]):
             print(f"{y.columns[i]}: {prob*100:.3f}%")
 
@@ -284,8 +287,8 @@ def main():
         model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/modelo_dnn_goals.keras')
         class_probabilities_prediccion_goals = model2.predict(X_prediccion)
 
-        print("Goles locales:", class_probabilities_prediccion_goals[0])
-        print("Goles visitantes:", class_probabilities_prediccion_goals[1])
+        print(f"Goles {nombre_equipo_local}:", class_probabilities_prediccion_goals[0])
+        print(f"Goles {nombre_equipo_visitante}:", class_probabilities_prediccion_goals[1])
 
 
 
@@ -302,6 +305,6 @@ def main():
 
         for i, pred in enumerate(class_probabilities_prediccion_marcan):
             if pred == 1:
-                print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n Ambos equipos marcan goles")
+                print("Ambos equipos marcan")
             else:
-                print(f"Predicción para el partido {equipo_local} vs. {equipo_visitante}:\n No marcan ambos")
+                print("No marcan ambos")
