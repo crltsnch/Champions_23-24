@@ -65,10 +65,10 @@ class Model1x2:
         tf.random.set_seed(0)
         for config in configurations:
             model = Sequential([
-            Reshape((X_train.shape[1],), input_shape=(X_train.shape[1],)),
-            Dense(config['units'], activation='relu'),
-            Dropout(config['dropout']),
-            Dense(3, activation='softmax')
+                Reshape((X_train.shape[1],), input_shape=(X_train.shape[1],)),
+                Dense(config['units'], activation='relu'),
+                Dropout(config['dropout']),
+                Dense(3, activation='softmax')
             ])
 
             optimizer = Adam(learning_rate=config['learning_rate'])
@@ -164,6 +164,7 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
+        plt.savefig('../resultados/learning_curve_dnn1X2.png')
         plt.show()
 
 
@@ -267,3 +268,19 @@ configurations = [
 data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
 data = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
+
+
+
+'''
+model_trainer = Model1x2()
+model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
+
+model = model_trainer.get_best_model()
+best_config = model_trainer.get_best_config()
+print("Mejor configuración:", best_config)
+
+
+model_evaluator = ModelEvaluation(model)
+model_evaluator.evaluate_model(X_test, y_test, y.columns)
+ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
+'''

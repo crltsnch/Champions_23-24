@@ -148,32 +148,28 @@ class ModelEvaluation:
     @staticmethod
     def plot_learning_curve_tf(history):
         train_loss = history.history['loss']
-        val_loss = history.history['val_loss']
         train_accuracy = history.history['accuracy']
-        val_accuracy = history.history['val_accuracy']
         
         epochs = range(1, len(train_loss) + 1)
         
-        plt.figure(figsize=(20, 6))
+        plt.figure(figsize=(12, 4))
         
         plt.subplot(1, 2, 1)
         plt.plot(epochs, train_loss, 'r', label='Training loss')
-        plt.plot(epochs, val_loss, 'b', label='Validation loss')
-        plt.title('Training and validation loss')
+        plt.title('Training loss')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
         
         plt.subplot(1, 2, 2)
-        plt.plot(epochs, train_accuracy, 'r', label='Training accuracy')
-        plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
-        plt.title('Training and validation accuracy')
+        plt.plot(epochs, train_accuracy, 'b', label='Training accuracy')
+        plt.title('Training accuracy')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('../resultados/learning_curve_dnnambos.png')
         plt.show()
+
 
 
 
@@ -221,4 +217,4 @@ model_evaluator = ModelEvaluation(model)
 
 # Evaluar el modelo en el conjunto de prueba y graficar la matriz de confusión y las curvas de aprendizaje
 model_evaluator.evaluate_model(X_test, y_test)
-ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
+model_evaluator.plot_learning_curve_tf(model_trainer.history)
