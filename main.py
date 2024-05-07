@@ -1,3 +1,4 @@
+import json
 from get.entrenadores import EntrenadorExtractor
 from get.equipo import EquipoExtractor
 from get.jugador_17_18 import Jugadores2Extractor
@@ -5,9 +6,9 @@ from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
 from get.Trayectoria_entrenador import TrayectoriaEntrenador
 from preparacion import *
-from DeepLearning.dnn_1x2 import Model1x2, data_usuario, datos_usuario, scaler, y, X_train, y_train, X_test, y_test, configurations
-from DeepLearning.dnn_goles import GoalsPredictionModel
-from DeepLearning.dnn_marcanambos import ModelMarcanAmbos
+from DeepLearning.dnn_1x2 import LoadData1x2, Model1x2, data_usuario, datos_usuario, configurations
+from DeepLearning.dnn_goles import LoadDataGoles, GoalsPredictionModel
+from DeepLearning.dnn_marcanambos import LoadData, ModelMarcanAmbos
 
 
 def main():
@@ -228,18 +229,35 @@ def main():
         guardar_data('dataframe/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
 
     if var == 'C':
+        # Load Data
+        data_loader = LoadData1x2('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+        data = data_loader.load_data()
+        X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
+
         df = data_usuario('dataframe/champions_23_24.csv', 'dataframe/champions.csv')
 
         model = Model1x2()
         model.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
 
-        # 1. Pedir al usuario que ingrese el equipo local
-        print("Seleccione el equipo local:")
-        equipos_disponibles = df['Local'].unique()
-        print(equipos_disponibles)
+        # Cargar el archivo JSON que contiene los nombres de los equipos y sus IDs
+        with open('dataframe/id_equipo.json') as f:
+            equipos_dict = json.load(f)
 
-        equipo_local = int(input("Ingrese el nombre del equipo local: "))
-        equipo_visitante = int(input("Ingrese el nombre del equipo visitante: "))
+        equipos_dict_invertido = {v: k for k, v in equipos_dict.items()}
+
+        # Obtener los equipos únicos de la columna 'Local' de tu DataFrame
+        equipos_disponibles = df['Local'].unique()
+
+        # Imprimir los nombres de los equipos únicos junto con sus IDs correspondientes
+        print("Equipos disponibles para enfrentar:")
+        for equipo_id in equipos_disponibles:
+            equipo_nombre = equipos_dict_invertido.get(equipo_id)
+            if equipo_nombre is not None:
+                print(f"{equipo_nombre}, {equipo_id}")
+
+
+        equipo_local = int(input("Ingrese el ID del equipo local: "))
+        equipo_visitante = int(input("Ingrese el ID del equipo visitante: "))
 
         nuevo_dataframe = datos_usuario(df, equipo_local, equipo_visitante)
 
@@ -251,6 +269,16 @@ def main():
         print(f"Probabilidades de clase predichas para el partido {equipo_local} VS. {equipo_visitante}:")
         for i, prob in enumerate(class_probabilities_prediccion[0]):
             print(f"{y.columns[i]}: {prob*100:.3f}%")
+
+
+
+        #------------------ Goles ------------------
+
+        # Cargar los datos
+        data_loader = LoadDataGoles('dataframe/champions.csv')
+        data_goles = data_loader.load_data()
+        X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
+
         
         model2 = GoalsPredictionModel()
         model2.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/modelo_dnn_goals.keras')
@@ -258,6 +286,15 @@ def main():
 
         print("Goles locales:", class_probabilities_prediccion_goals[0])
         print("Goles visitantes:", class_probabilities_prediccion_goals[1])
+
+
+
+        #------------------ Marcan Ambos ------------------
+
+        # Cargar los datos
+        data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+        data = data_loader.load_data()
+        X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
         model3 = ModelMarcanAmbos()
         model3.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_ambos_marcan.keras')

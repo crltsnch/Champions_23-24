@@ -173,12 +173,10 @@ class ModelEvaluation:
         plt.show()
 
 
-# Cargar los datos
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 
+'''
+Este es el codigo usado para crear y entrenar el modelo desde este fichero
 
 configurations = [
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
@@ -209,4 +207,4 @@ model_evaluator = ModelEvaluation(model)
 model_evaluator.evaluate_model(X_test, y_test)
 
 
-model_evaluator.plot_learning_curve_tf(model_trainer.history)
+model_evaluator.plot_learning_curve_tf(model_trainer.history)'''

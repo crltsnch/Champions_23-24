@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
 from matplotlib import pyplot as plt
 
-class LoadData:
+class LoadData1x2:
     def __init__(self, file_path):
         self.file_path = file_path
 
@@ -248,11 +248,6 @@ def datos_usuario(df, equipo_local, equipo_visitante):
 
 
 
-# Load Data
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
-
 
 
 
@@ -274,7 +269,7 @@ configurations = [
 ]
 
 
-'''
+''' Este es el codigo usado para crear y entrenar el modelo desde este fichero
 model_trainer = Model1x2()
 model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
 
