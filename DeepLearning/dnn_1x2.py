@@ -245,7 +245,7 @@ def datos_usuario(df, equipo_local, equipo_visitante):
     return nuevo_dataframe
 
 
-# Importaciones necesarias
+
 
 # Definición de las configuraciones
 configurations = [
@@ -271,7 +271,6 @@ X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 
 
-'''
 model_trainer = Model1x2()
 model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_1x2.keras')
 
@@ -283,4 +282,3 @@ print("Mejor configuración:", best_config)
 model_evaluator = ModelEvaluation(model)
 model_evaluator.evaluate_model(X_test, y_test, y.columns)
 ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
-'''

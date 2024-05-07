@@ -57,6 +57,7 @@ class ModelMarcanAmbos:
         self.best_model = None
         self.best_config = None
         self.best_accuracy = 0
+        self.best_history = None  # Agregar un atributo para almacenar el historial del mejor modelo
 
     def train_or_load_model(self, configurations, X_train, y_train, X_test, y_test, model_path):
         if os.path.exists(model_path):
@@ -66,7 +67,6 @@ class ModelMarcanAmbos:
             # Entrenar un nuevo modelo
             self.train_model(configurations, X_train, y_train, X_test, y_test)
             self.guardar_modelo(model_path)
-
 
     def train_model(self, configurations, X_train, y_train, X_test, y_test):
         tf.random.set_seed(0)
@@ -84,16 +84,17 @@ class ModelMarcanAmbos:
 
             history = model.fit(X_train, y_train, epochs=config['epochs'], batch_size=config['batch_size'], validation_split=0.1)
             
-            self.history = history
+            self.history = history  # Almacenar el historial aquí
             _, accuracy = model.evaluate(X_test, y_test)
             
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
                 self.best_model = model
                 self.best_config = config
-
-        return history
+            
+        return self.history  # Devolver el historial
     
+
     def get_best_model(self):
         return self.best_model
     
@@ -128,7 +129,7 @@ class ModelEvaluation:
 
         # Calcular y mostrar la matriz de confusión
         conf_matrix = confusion_matrix(true_labels, predictions)
-        print("Confusion Matrix:")
+        print("Confusion Matrix - Marcan Ambos:")
         print(conf_matrix)
 
         self.plot_matriz_confusion(conf_matrix)
@@ -142,7 +143,7 @@ class ModelEvaluation:
         plt.yticks(tick_marks, ['No Marcan Ambos', 'Marcan Ambos'])
         plt.xlabel("Predicted Class")
         plt.ylabel("True Class")
-        plt.title("Confusion Matrix")
+        plt.title("Confusion Matrix - Marcan Ambos")
         plt.show()
 
     @staticmethod
@@ -168,35 +169,26 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
+        plt.savefig('../resultados/learning_curve_dnnambos.png')
         plt.show()
 
 
 
 
-# Definir diferentes configuraciones de red y hiperparámetros
 configurations = [
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
     {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
     {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2}, 
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3},
-    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
-    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
-    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0001, 'batch_size': 16, 'epochs': 10, 'dropout': 0.3}
+    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
+    {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1},
+    {'units': 64, 'filters': 32, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
+    {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 20, 'dropout': 0.2},
+    {'units': 256, 'filters': 128, 'kernel_size': 5, 'learning_rate': 0.0005, 'batch_size': 32, 'epochs': 15, 'dropout': 0.2},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 64, 'epochs': 20, 'dropout': 0.3},
+    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
+    {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 16, 'epochs': 15, 'dropout': 0.1},
+    {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
+    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
 # Cargar los datos
@@ -205,16 +197,17 @@ data = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 model_trainer = ModelMarcanAmbos()
-history = model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
+model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
 
 model = model_trainer.get_best_model()
 best_config = model_trainer.get_best_config()
 print("Mejor configuración:", best_config)
 
 
-# Crear una instancia de ModelEvaluation
 model_evaluator = ModelEvaluation(model)
-
-# Evaluar el modelo en el conjunto de prueba y graficar la matriz de confusión y las curvas de aprendizaje
 model_evaluator.evaluate_model(X_test, y_test)
-model_evaluator.plot_learning_curve_tf(model_trainer.history)
+# Después de entrenar el modelo
+'''best_history = model_trainer.train_model(configurations, X_train, y_train, X_test, y_test)'''
+
+# Luego, puedes usar el historial para plotear la curva de aprendizaje
+model_evaluator.plot_learning_curve_tf(model_trainer.history)  # Utiliza el historial del mejor modelo
