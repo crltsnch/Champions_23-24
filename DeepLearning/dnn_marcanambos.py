@@ -149,7 +149,9 @@ class ModelEvaluation:
     @staticmethod
     def plot_learning_curve_tf(history):
         train_loss = history.history['loss']
+        val_loss = history.history['val_loss']
         train_accuracy = history.history['accuracy']
+        val_accuracy = history.history['val_accuracy']
         
         epochs = range(1, len(train_loss) + 1)
         
@@ -157,19 +159,21 @@ class ModelEvaluation:
         
         plt.subplot(1, 2, 1)
         plt.plot(epochs, train_loss, 'r', label='Training loss')
+        plt.plot(epochs, val_loss, 'b', label='Validation loss')
         plt.title('Training loss')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
         
         plt.subplot(1, 2, 2)
-        plt.plot(epochs, train_accuracy, 'b', label='Training accuracy')
+        plt.plot(epochs, train_accuracy, 'r', label='Training accuracy')
+        plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
         plt.title('Training accuracy')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/resultados/learning_curve_dnn_ambos.png')
+        plt.savefig('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/resultados/learning_curve_dnnambos.png')
         plt.show()
 
 
@@ -177,6 +181,11 @@ class ModelEvaluation:
 
 '''
 Este es el codigo usado para crear y entrenar el modelo desde este fichero
+
+# Cargar los datos
+data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+data = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 configurations = [
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
@@ -191,7 +200,7 @@ configurations = [
     {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
     {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 16, 'epochs': 15, 'dropout': 0.1},
     {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
-    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
+    {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1},
 ]
 
 
@@ -207,4 +216,5 @@ model_evaluator = ModelEvaluation(model)
 model_evaluator.evaluate_model(X_test, y_test)
 
 
-model_evaluator.plot_learning_curve_tf(model_trainer.history)'''
+model_evaluator.plot_learning_curve_tf(model_trainer.history)
+'''
