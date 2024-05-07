@@ -209,13 +209,16 @@ data = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 model_trainer = ModelMarcanAmbos()
-model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
+history = model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
 
 model = model_trainer.get_best_model()
 best_config = model_trainer.get_best_config()
 print("Mejor configuración:", best_config)
 
 
+# Crear una instancia de ModelEvaluation
 model_evaluator = ModelEvaluation(model)
+
+# Evaluar el modelo en el conjunto de prueba y graficar la matriz de confusión y las curvas de aprendizaje
 model_evaluator.evaluate_model(X_test, y_test)
 ModelEvaluation.plot_learning_curve_tf(model_trainer.history)
