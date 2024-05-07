@@ -169,9 +169,14 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('../resultados/learning_curve_dnnambos.png')
+        plt.savefig('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/resultados/learning_curve_dnn_ambos.png')
         plt.show()
 
+
+# Cargar los datos
+data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+data = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 
 
@@ -191,13 +196,9 @@ configurations = [
     {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
-# Cargar los datos
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
-data = data_loader.load_data()
-X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
 model_trainer = ModelMarcanAmbos()
-model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/prueba.keras')
+model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_ambos_marcan.keras')
 
 model = model_trainer.get_best_model()
 best_config = model_trainer.get_best_config()
@@ -206,8 +207,6 @@ print("Mejor configuración:", best_config)
 
 model_evaluator = ModelEvaluation(model)
 model_evaluator.evaluate_model(X_test, y_test)
-# Después de entrenar el modelo
-'''best_history = model_trainer.train_model(configurations, X_train, y_train, X_test, y_test)'''
 
-# Luego, puedes usar el historial para plotear la curva de aprendizaje
-model_evaluator.plot_learning_curve_tf(model_trainer.history)  # Utiliza el historial del mejor modelo
+
+model_evaluator.plot_learning_curve_tf(model_trainer.history)
