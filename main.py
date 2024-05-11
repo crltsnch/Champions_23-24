@@ -244,7 +244,8 @@ def main():
             {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
             {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
         ]
-                # Load Data
+        
+        # Load Data
         data_loader = LoadData1x2('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
         data = data_loader.load_data()
         X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
@@ -262,6 +263,7 @@ def main():
 
         # Obtener los equipos únicos de la columna 'Local' de tu DataFrame
         equipos_disponibles = df['Local'].unique()
+        equipos_disponibles = np.sort(equipos_disponibles)
 
         # Imprimir los nombres de los equipos únicos junto con sus IDs correspondientes
         print("Equipos disponibles para enfrentar:")

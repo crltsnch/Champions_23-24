@@ -161,10 +161,14 @@ class ModelEvaluation:
 {'units': 256, 'filters': 128, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 16, 'epochs': 15, 'dropout': 0.1},
 {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 10, 'dropout': 0.1},
 {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
-]'''
+]
+
+data_loader = LoadDataGoles('dataframe/champions.csv')
+data_goles = data_loader.load_data()
+X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
 
 
-'''Este es el codigo usado para crear y entrenar el modelo desde este fichero
+#Este es el codigo usado para crear y entrenar el modelo desde este fichero
 model_trainer = GoalsPredictionModel()
 model_trainer.train_or_load_model(configurations, X_train, y_train, X_test, y_test, 'modelos/dnn_goles.keras')
 

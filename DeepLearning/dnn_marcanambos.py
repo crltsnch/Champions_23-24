@@ -180,7 +180,7 @@ class ModelEvaluation:
 
 
 '''
-Este es el codigo usado para crear y entrenar el modelo desde este fichero
+#Este es el codigo usado para crear y entrenar el modelo desde este fichero
 
 # Cargar los datos
 data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
