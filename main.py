@@ -4,7 +4,7 @@ from get.equipo import EquipoExtractor
 from get.jugador_17_18 import Jugadores2Extractor
 from get.jugador import JugadoresExtractor
 from get.partido import PartidoScraper
-from get.Trayectoria_entrenador import TrayectoriaEntrenador
+from get.Trayectoria_entrenador import TrayectoriaEntrenadorExtractor
 from preparacion import *
 from DeepLearning.dnn_1x2 import LoadData1x2, Model1x2, data_usuario, datos_usuario
 from DeepLearning.dnn_goles import LoadDataGoles, GoalsPredictionModel
@@ -147,13 +147,13 @@ def main():
         'https://www.bdfutbol.com/es/l/l95008.html', 'https://www.bdfutbol.com/es/l/l82969.html', 'https://www.bdfutbol.com/es/l/l50794.html',
         'https://www.bdfutbol.com/es/l/l7419.html', 'https://www.bdfutbol.com/es/l/l2026.html', 'https://www.bdfutbol.com/es/l/l1098.html'
             ]
-        csv_file = 'data/Trayectoria_entrenador.csv'
-        trayectoria = TrayectoriaEntrenador(urls, csv_file)
+    
+        trayectoria = TrayectoriaEntrenadorExtractor(urls, 'data/Trayectoria_entrenador.csv')
         trayectoria.cargar_ids_entrenador('data/entrenador.csv') 
         trayectoria.extraer_datos()
         trayectoria.guardar_csv()
 
-    if var == 'B':
+
         # Crear instancia de Entrenador
         entrenador = Entrenador('data/entrenador.csv')
         diccionario_entrenadores = entrenador.diccionario_entrenadores()  #guardar

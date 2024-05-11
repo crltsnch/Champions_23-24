@@ -1,19 +1,12 @@
 import csv
-import requests
-from bs4 import BeautifulSoup
 from tabulate import tabulate
 from urllib.parse import urlparse, unquote
 import pandas as pd
-
-# Lista de URLs de equipos
-
-
-import csv
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 
-class TrayectoriaEntrenador:
+
+class TrayectoriaEntrenadorExtractor:
     def __init__(self, urls, csv_file):
         self.urls = urls
         self.csv_file = csv_file
