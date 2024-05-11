@@ -154,7 +154,7 @@ def main():
         trayectoria.guardar_csv()
 
     if var == 'B':
-            # Crear instancia de Entrenador
+        # Crear instancia de Entrenador
         entrenador = Entrenador('data/entrenador.csv')
         diccionario_entrenadores = entrenador.diccionario_entrenadores()  #guardar
         df_entrenador = entrenador.procesar()  #guardar
