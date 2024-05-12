@@ -430,8 +430,6 @@ class Champions:
 
         # Convertir columnas de evento
         self.df1['Evento'] = self.df1['Evento'].astype(str)
-        
-        print(self.df1['Visitante'].unique())
 
         # Convertir columnas de local y visitante a tipo int
         self.df1['Local'] = self.df1['Local'].astype(int)

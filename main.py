@@ -160,12 +160,14 @@ def main():
         diccionario_entrenadores = entrenador.diccionario_entrenadores()  #guardar
         df_entrenador = entrenador.procesar()  #guardar
 
+
         # Crear instancia de Equipo
         df_equipo = Equipo('data/equipo.csv')
         diccionario_equipos = df_equipo.diccionario_equipos()  #guardar 
         print(diccionario_equipos)
         guardar_diccionario(diccionario_equipos, 'dataframe/id_equipo.json')
         df_equipo = df_equipo.procesar()  #guardar
+
 
         # Crear instancia de TrayectoriaEntrenador
         df_trayectoria_entrenador = TrayectoriaEntrenador('data/trayectoria_entrenador.csv')
@@ -178,6 +180,7 @@ def main():
         df_partido.procesar1()
         df_partido.procesar_diccionario_equipos(diccionario_equipos)
         df_partido = df_partido.procesar2()
+
 
         # Crear instancia de Jugador
         df_jugadores = Jugador('data/jugador.csv', 'data/jugador2.csv')
@@ -220,14 +223,22 @@ def main():
         champions, champions_23_24 = df_champions.procesar()   #guardar los dos
 
         guardar_diccionario(diccionario_entrenadores, 'dataframe/id_entrenador.json')
+        print("IDs entrenadores guardado")
         guardar_diccionario(diccionario_ids_jugadores, 'dataframe/id_jugador.json')
+        print("IDs jugadores guardado")
 
         guardar_data('dataframe/df_entrenador.csv', df_entrenador)
+        print("Data entrenadores guardado")
         guardar_data('dataframe/df_equipo.csv', df_equipo)
+        print("Data Equipos guardado")
         guardar_data('dataframe/champions.csv', champions)
+        print("Data Champions guardado")
         guardar_data('dataframe/champions_23_24.csv', champions_23_24)
+        print("Data Champions 23-24 guardado")
         guardar_data('dataframe/df_jugadores.csv', df_jugadores)
+        print("Data Jugadores guardado")
         guardar_data('dataframe/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
+        print("Data Trayectoria entrenador guardado")
 
     if var == 'C':
         configurations = [
