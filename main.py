@@ -61,7 +61,8 @@ def main():
         scraper = PartidoScraper()
         scraper.scrape_data(temporadas)
         scraper.guardar_datos_csv('data/partido.csv')
-        
+    
+    if var=='B':
         urls = ['https://www.bdfutbol.com/es/l/l93816.html', 'https://www.bdfutbol.com/es/l/l93761.html', 'https://www.bdfutbol.com/es/l/l95279.html',
         'https://www.bdfutbol.com/es/l/l1566.html', 'https://www.bdfutbol.com/es/l/l99573.html', 'https://www.bdfutbol.com/es/l/l3685.html',
         'https://www.bdfutbol.com/es/l/l3787.html', 'https://www.bdfutbol.com/es/l/l92334.html', 'https://www.bdfutbol.com/es/l/l581.html',

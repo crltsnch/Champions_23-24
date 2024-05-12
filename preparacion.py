@@ -58,10 +58,16 @@ class Partido:
         self.df = pd.read_csv(ruta)
     
     def procesar1(self):
+        # Elimina las filas donde el valor en la columna 'Local' o 'Visitante' sea igual a 'Qarabağaz'
+        self.df = self.df.loc[(self.df['Local'] != 'Qarabağaz') & (self.df['Visitante'] != 'Qarabağaz')]
+        self.df = self.df.loc[(self.df['Local'] != 'azQarabağ') & (self.df['Visitante'] != 'azQarabağ')]
+        
+        # Elimina la fila donde 'Local' es igual a 'Home'
         self.df = self.df[self.df['Local'] != 'Home']
+        
         self.df.reset_index(drop=True, inplace=True)
         self.df = self.df.drop_duplicates()
-        columnas_a_eliminar = ['Wk', 'Dia', 'Fecha', 'Hora', 'Reporte', 'Notas', 'Público', 'Arbitro']
+        columnas_a_eliminar = ['Wk', 'Dia', 'Fecha', 'Hora', 'Reporte', 'Notas', 'Público', 'Árbitro']
         self.df = self.df.drop(columns=columnas_a_eliminar)
         return self.df
     
@@ -223,6 +229,9 @@ class Jugador:
         return self.df
     
     def procesar(self):
+        self.df = self.df.loc[self.df['Equipo'] != 'azQarabağ']
+        self.df = self.df.loc[self.df['Equipo'] != 'Qarabağ']
+
         #Eliminar columnas que no necesito
         colum_eliminar = ['País', 'Posc', '#', 'Nacimiento', '90 s', 'G+A', 'G-TP', 'Gls.90', 'Ast90', 'G+A90', 'G-TP90',
             'G+A-TP90', 'Partidos', 'xG90', 'xAG90', 'xG+xAG90', 'npxG90', 'npxG+xAG90', 'Gls90.', 'xAG', 'npxG+xAG']
@@ -284,6 +293,7 @@ class Jugador:
             
             # Si no hay coincidencia, devolver el nombre original
             return nombre_equipo
+        
 
         self.df['Equipo'] = self.df['Equipo'].astype(str)
         self.df['Equipo'] = self.df['Equipo'].apply(obtener_id_equipo)
@@ -293,7 +303,7 @@ class Jugador:
 
 
         #Elimino las filas que no tengan los equipos id asignados, nos dan igual
-        condicion = ~self.df['Equipo'].isin(['fiLahti', 'isKV', 'isÍþróttabandalag Akraness', 'mtFloriana FC', 'atAustria Salzburg'])
+        condicion = ~self.df['Equipo'].isin(['fiLahti', 'isKV', 'isÍþróttabandalag Akraness', 'mtFloriana FC', 'atAustria Salzburg', 'Qarabağaz'])
         self.df = self.df[condicion]
         self.df.reset_index(drop=True, inplace=True)
 
@@ -420,6 +430,8 @@ class Champions:
 
         # Convertir columnas de evento
         self.df1['Evento'] = self.df1['Evento'].astype(str)
+        
+        print(self.df1['Visitante'].unique())
 
         # Convertir columnas de local y visitante a tipo int
         self.df1['Local'] = self.df1['Local'].astype(int)
