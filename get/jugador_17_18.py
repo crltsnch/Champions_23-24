@@ -17,7 +17,7 @@ class Jugadores2Extractor:
             self.driver.implicitly_wait(10)
             html = self.driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
-            container = soup.find('div', {'class': 'table_container', 'id': 'div_stats_standard'})
+            container = soup.find('div', {'class': 'table_container is_setup', 'id': 'div_stats_standard'})
 
             if container:
                 table = container.find('table', {'class': 'stats_table'})
