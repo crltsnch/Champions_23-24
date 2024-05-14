@@ -163,7 +163,7 @@ class ModelEvaluation:
 {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
-data_loader = LoadDataGoles('dataframe/champions.csv')
+data_loader = LoadDataGoles('../dataframe/champions.csv')
 data_goles = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data_goles)
 

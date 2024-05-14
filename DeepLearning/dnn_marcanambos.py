@@ -173,7 +173,7 @@ class ModelEvaluation:
         plt.ylabel('Accuracy')
         plt.legend()
         plt.tight_layout()
-        plt.savefig('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/resultados/learning_curve_dnnambos.png')
+        plt.savefig('../resultados/learning_curve_dnnambos.png')
         plt.show()
 
 
@@ -183,7 +183,7 @@ class ModelEvaluation:
 #Este es el codigo usado para crear y entrenar el modelo desde este fichero
 
 # Cargar los datos
-data_loader = LoadData('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+data_loader = LoadData('../dataframe/champions.csv')
 data = data_loader.load_data()
 X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
