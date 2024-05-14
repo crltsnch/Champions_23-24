@@ -12,9 +12,8 @@ from DeepLearning.dnn_marcanambos import LoadData, ModelMarcanAmbos
 
 
 def main():
-    var = input("(A) Mete A para hacer la extracción de datos\n"
-      "(B) Mete B para hacer la preparación de datos\n"
-      "(C) Mete C para hacer las predicciones del resultado, los goles y si/no marcan ambos: ")
+    var = input("(A) Mete A para actualizar los datos\n"
+      "(B) Mete B para hacer las predicciones del resultado, los goles y si/no marcan ambos: ")
 
     if var == 'A':
         # Extracción y guardado de datos de entrenadores
@@ -52,6 +51,7 @@ def main():
         scraper.save_to_csv(archivo_csv)
         scraper.close_driver()
 
+
         temporadas = [
         '2023-2024', '2022-2023', '2021-2022', '2020-2021', '2019-2020',
         '2018-2019', '2017-2018', '2016-2017', '2015-2016', '2014-2015',
@@ -62,7 +62,7 @@ def main():
         scraper.scrape_data(temporadas)
         scraper.guardar_datos_csv('data/partido.csv')
     
-    if var=='B':
+
         urls = ['https://www.bdfutbol.com/es/l/l93816.html', 'https://www.bdfutbol.com/es/l/l93761.html', 'https://www.bdfutbol.com/es/l/l95279.html',
         'https://www.bdfutbol.com/es/l/l1566.html', 'https://www.bdfutbol.com/es/l/l99573.html', 'https://www.bdfutbol.com/es/l/l3685.html',
         'https://www.bdfutbol.com/es/l/l3787.html', 'https://www.bdfutbol.com/es/l/l92334.html', 'https://www.bdfutbol.com/es/l/l581.html',
@@ -240,7 +240,7 @@ def main():
         guardar_data('dataframe/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
         print("Data Trayectoria entrenador guardado")
 
-    if var == 'C':
+    if var == 'B':
         configurations = [
             {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
             {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
