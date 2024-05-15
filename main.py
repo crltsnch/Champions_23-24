@@ -12,8 +12,8 @@ from DeepLearning.dnn_marcanambos import LoadData, ModelMarcanAmbos
 
 
 def main():
-    var = input("(A) Mete A para actualizar los datos\n"
-      "(B) Mete B para hacer las predicciones del resultado, los goles y si/no marcan ambos: ")
+    var = input("(A) Ingrese A para actualizar los datos\n"
+      "(B) Ingrese B para predecir el resultado de un partido:  ")
 
     if var == 'A':
         # Extracción y guardado de datos de entrenadores
