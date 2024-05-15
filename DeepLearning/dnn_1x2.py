@@ -266,7 +266,7 @@ configurations = [
 {'units': 128, 'filters': 64, 'kernel_size': 5, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.1}
 ]
 
-data_loader = LoadData1x2('/Users/carlotasanchezgonzalez/Documents/class/Champions_23-24/dataframe/champions.csv')
+data_loader = LoadData1x2('../dataframe/champions.csv')
         data = data_loader.load_data()
         X_train, X_test, y_train, y_test, scaler, X, y = data_loader.prepare_data(data)
 
