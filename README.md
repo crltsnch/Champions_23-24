@@ -7,6 +7,9 @@ La idea de este trabajo es hacer unas predicciones sobre la UEFA Champions Leagu
 ## Casas_de_apuestas.pdf
 En este fichero está explicado el desarrollo de este proyecto en profundidad con resultados y conclusiones.
 
+## requirements.txt
+Librerías utilizadas en nuestro proyecto. Descargar con ```pip install -r requirements.txt```
+
 
 ## get
 En esta carpeta están los ficheros que he usado para conseguir los datos de los csv de la carpeta data.
