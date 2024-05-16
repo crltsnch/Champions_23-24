@@ -14,8 +14,10 @@ from DeepLearning.dnn_marcanambos import LoadData, ModelMarcanAmbos
 def main():
     var = input("(A) Ingrese A para actualizar los datos\n"
       "(B) Ingrese B para predecir el resultado de un partido:  ")
+    
+    var = var.lower()
 
-    if var == 'A':
+    if var == 'a':
         # Extracción y guardado de datos de entrenadores
         entrenador_url = 'https://www.bdfutbol.com/es/t/trcompCHA.html?p=coaches&t=T'
         entrenador_extractor = EntrenadorExtractor(entrenador_url)
@@ -240,7 +242,7 @@ def main():
         guardar_data('dataframe/df_entrenador_trayectoria.csv', df_trayectoria_entrenador)
         print("Data Trayectoria entrenador guardado")
 
-    if var == 'B':
+    if var == 'b':
         configurations = [
             {'units': 64, 'filters': 32, 'kernel_size': 3, 'learning_rate': 0.001, 'batch_size': 32, 'epochs': 10, 'dropout': 0.2},
             {'units': 128, 'filters': 64, 'kernel_size': 3, 'learning_rate': 0.01, 'batch_size': 64, 'epochs': 15, 'dropout': 0.1},
